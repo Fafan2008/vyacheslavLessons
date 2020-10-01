@@ -22,5 +22,4 @@ public class Solution {
         root = new TreeNode(1, l1, r1);
         int res = sumOfLeftLeaves(root);
     }
-
 }
