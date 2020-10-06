@@ -1,7 +1,5 @@
 package leetcode.sumOfLeftLeaves;
 
-import java.util.Stack;
-
 public class Solution {
     public static int sumOfLeftLeaves(TreeNode root){
         if (root == null)
@@ -10,29 +8,7 @@ public class Solution {
             return root.left.val + sumOfLeftLeaves(root.right);
         else
             return sumOfLeftLeaves(root.left) + sumOfLeftLeaves(root.right);
-        ////
     }
-
-    public static int sumSecondVersion(TreeNode root)
-    {
-        int sum = 0;
-        boolean left = false;
-        Stack<TreeNode> stackTree = new Stack<TreeNode>();
-        TreeNode current = root;
-        while(current != null || stackTree.size()>0){
-            while (current != null) {
-                stackTree.push(current.left);
-                if (current.left == null && left)
-                    sum += current.val;
-                current = current.left;
-            }
-            current = stackTree.pop();
-            //to do smth
-            current = current.right;
-        }
-        return sum;
-    }
-
     public static void main(String[] args){
         TreeNode root;
         TreeNode l1;

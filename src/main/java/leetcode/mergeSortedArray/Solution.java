@@ -1,36 +1,17 @@
 package leetcode.mergeSortedArray;
 
 class Solution {
-    public void merge(int[] nums1, int m, int[] nums2, int n) {
-        int r = m + n;
-        int resultArray[] = new int[r];
-        int j = 0;
-        int k = 0;
-        if (n == 0)
-            return;
-        for (int i = 0; i < r; i++) {
-            if (k >= n && j >= m)
-                break;
-            if (k >= n) {
-                resultArray[i] = nums1[j];
-                j++;
-                continue;
+    public void merge(int[] arr1, int end1, int[] arr2, int end2) {
+        end1--;
+        end2--;
+        int carriage = arr1.length - 1;
+        while (carriage >= 0) {
+            if (end1>=0 && end2 >=0){
+                arr1[carriage--] = arr1[end1] >= arr2[end2] ? arr1[end1--] : arr2[end2--];
             }
-            if (j >= m) {
-                resultArray[i] = nums2[k];
-                k++;
-                continue;
+            else{
+                arr1[carriage--] = end1 >= 0 ? arr1[end1--] : arr2[end2--];
             }
-            if (nums1[j] <= nums2[k]) {
-                resultArray[i] = nums1[j];
-                j++;
-            } else {
-                resultArray[i] = nums2[k];
-                k++;
-            }
-        }
-        for (int i = 0; i < nums1.length; i++) {
-            nums1[i] = resultArray[i];
         }
     }
 }
