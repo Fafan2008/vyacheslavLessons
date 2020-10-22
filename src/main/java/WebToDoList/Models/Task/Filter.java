@@ -29,7 +29,7 @@ public class Filter {
             if (task.userID.equals(filter.userID))
                 userIDEqual = true;
         if (!priorityEqual)
-            if (task.priority == filter.priority || task.priority == Priority.UNDEFINED)
+            if (task.priority == filter.priority || (task.priority == Priority.UNDEFINED || filter.priority == Priority.UNDEFINED))
                 priorityEqual = true;
         if(!timeEqual && (filter.start != null || filter.end != null)) {
             if (filter.start != null && filter.end != null)

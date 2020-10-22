@@ -6,8 +6,8 @@ public class FilterBuilder {
     private String id;
     private String userID;
     private Priority priority = Priority.UNDEFINED;
-    private Date start = new Date(0);
-    private Date end = new Date(-1);
+    private Date start;
+    private Date end;
 
     public FilterBuilder() {}
 
