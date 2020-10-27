@@ -10,17 +10,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-// Попробуй это.
-//https://www.baeldung.com/java-maps-streams
 public class Db implements IDb{
     Map<String,Task> taskMap = new HashMap<>();
     Map<String, User> userMap = new HashMap<>();
 
     @Override
-    public ITask getTask(String id) {
+    public User getUser(String id) {
+        return userMap.get(id);
+    }
+    @Override
+    public Task getTask(String id) {
         return taskMap.get(id);
     }
 
+    @Override
+    public void addTask(String id, Task task) {
+        taskMap.put(id, task);
+    }
+
+    // Попробуй это.
+    //https://www.baeldung.com/java-maps-streams
     @Override
     public List<Task> getTasks(Search filter) {
         return taskMap.entrySet().stream()

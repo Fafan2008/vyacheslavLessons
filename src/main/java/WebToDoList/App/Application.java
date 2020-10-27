@@ -1,38 +1,98 @@
 package WebToDoList.App;
 
-import WebToDoList.Models.Task.*;
+import WebToDoList.Console.AppConsole;
+import WebToDoList.Console.Command;
+import WebToDoList.DataBase.Db;
+import WebToDoList.Models.User.User;
 
-import java.util.Date;
-import java.util.UUID;
+import java.util.Scanner;
+
+//how use console input in IntelIdea
+//        https://examples.javacodegeeks.com/java-input-example/
+//        https://data-flair.training/blogs/read-java-console-input/
 
 public class Application {
+    private Db db = new Db();
+    private User activeUser;
+
     public static void main(String[] args){
-        //Task task1 = new Task();
-//        task1.id = UUID.randomUUID().toString();
-//        task1.userID = "User1";
-//        task1.name = "Name 1";
-//        task1.description = "Description 1";
-//        task1.priority = Priority.DEFAULT;
+        Application app = new Application();
+        if (app.authenticate())
+            app.run();
+        else
+            System.out.println("Bye.");
+    }
 
-        //Filter filter = new FilterBuilder().userID("User1").buildFilter();
-        System.out.println("Result of filter matching task1 and filter1 must be TRUE");
-        //System.out.println("Result is : " + Filter.match(task1, filter));
-        System.out.println();
+    private void run() {
+        boolean exit = false;
+        Scanner scanner = new Scanner(System.in);
+        do{
+            printHomeMenu();
+            System.out.println("wait cmnd: ");
+            Command cmnd =  Command.fromString(scanner.nextLine());
+            execute(cmnd);
+            if (cmnd == Command.EXT)
+                exit = true;
+        }while (!exit);
+    }
 
-        Update updates = new Update();
-        updates.timeToComplete = new Date(new Date().getTime() + 10000);
-        System.out.println("Update task1 must return TRUE");
-        //System.out.println("Result is : " + task1.update(updates));
-        System.out.println();
+    private void execute(Command cmnd) {
+        switch (cmnd){
+            case ADD:
+                AppConsole.addTask(db);
+        }
+    }
 
-        //filter = new FilterBuilder().start(new Date()).end(new Date(new Date().getTime() + 1000)).buildFilter();
-        System.out.println("Result of filter matching task1 and filter must be FALSE");
-        //System.out.println("Result is : " + Filter.match(task1, filter));
-        System.out.println();
+    static private void printHomeMenu() {
+        System.out.println("Actions: ");
+        System.out.println("1) CMND /obs \"Observe my tasks.\" ");
+        System.out.println("2) CMND /add \"Add task.\" ");
+        System.out.println("3) CMND /del \"Delete task.\" ");
+        System.out.println("4) CMND /upd \"Update my task.\" ");
+        System.out.println("4) CMND /ext \"Turn off pc power.\" ");
+    }
 
-        //filter = new FilterBuilder().start(new Date(new Date().getTime() - 1000)).end(new Date(new Date().getTime() + 10100)).buildFilter();
-        System.out.println("Result of filter matching task1 and filter must be TRUE");
-        //System.out.println("Result is : " + Filter.match(task1, filter));
-        System.out.println();
+    public boolean authenticate() {
+        boolean loginIsCorrected = false;
+        final String exit = "exit";
+        do{
+            System.out.println("Please authenticate. ");
+            System.out.println("Login: ");
+            Scanner scanner = new Scanner(System.in);
+            String login =  scanner.nextLine();
+            if (exit.equals(login)) break;
+            if (db.getUser(login)==null) {
+                System.out.println(login + " user was not found.");
+                System.out.println("Create new user? yes/no");
+                String answer =  scanner.nextLine();
+                if (stringToBoolean(answer)){
+                    do{
+                        System.out.println("Enter user name: ");
+                        login =  scanner.nextLine();
+                        if (exit.equals(login)) break;
+                        if (db.getUser(login)!=null)
+                            System.out.println("User name is busy. Pls enter another name, or print \"exit\" for out.");
+                        else
+                            loginIsCorrected = true;
+                    }while (!loginIsCorrected);
+                    if (!loginIsCorrected) break;
+                }else
+                    continue;
+            }else {
+                loginIsCorrected = true;
+                activeUser = db.getUser(login);
+            }
+        }while (!loginIsCorrected);
+        return loginIsCorrected;
+    }
+    static public boolean stringToBoolean(String input) {
+        if (input == null)
+            throw new IllegalArgumentException("Null input for stringToBoolean");
+        input = input.trim().toLowerCase();
+        if (input.equals("1") || input.equals("yes") || input.equals("true"))
+            return true;
+        if (input.equals("0") || input.equals("no") || input.equals("false"))
+            return false;
+        throw new IllegalArgumentException("Bad input for stringToBoolean: " + input);
     }
 }
