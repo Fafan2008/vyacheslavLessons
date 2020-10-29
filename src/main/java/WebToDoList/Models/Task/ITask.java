@@ -1,5 +1,6 @@
 package WebToDoList.Models.Task;
 
 public interface ITask {
-    public Task update(Update updates);
+    Task update(Update updates);
+    Data getData();
 }

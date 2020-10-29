@@ -42,4 +42,17 @@ public final class Task implements ITask {
         // I assumed that I should send a request to the remote database and receive a response based on which I can return a boolean result.
         //return new Task();
     }
+
+    @Override
+    public Data getData() {
+        Data data = new Data();
+        data.id = this.id;
+        data.userID = this.userID;
+        data.name = this.name;
+        data.description = this.description;
+        data.priority = this.priority;
+        data.timeToComplete = this.timeToComplete;
+        data.created = this.created;
+        return data;
+    }
 }

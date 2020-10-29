@@ -1,39 +1,11 @@
 package WebToDoList.DataBase;
-
-import WebToDoList.Models.Task.ITask;
-import WebToDoList.Models.Task.Priority;
 import WebToDoList.Models.Task.Task;
 import WebToDoList.Models.User.User;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-public class Db implements IDb{
+public class Db{
     Map<String,Task> taskMap = new HashMap<>();
     Map<String, User> userMap = new HashMap<>();
-
-    @Override
-    public User getUser(String id) {
-        return userMap.get(id);
-    }
-    @Override
-    public Task getTask(String id) {
-        return taskMap.get(id);
-    }
-
-    @Override
-    public void addTask(String id, Task task) {
-        taskMap.put(id, task);
-    }
-
-    // Попробуй это.
-    //https://www.baeldung.com/java-maps-streams
-    @Override
-    public List<Task> getTasks(Search filter) {
-        return taskMap.entrySet().stream()
-                .filter(item -> filter.priority == Priority.UNDEFINED || item.getValue().priority().equals(filter.priority))
-                .map(Map.Entry::getValue).collect(Collectors.toList());
-    }
 }
