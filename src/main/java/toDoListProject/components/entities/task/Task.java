@@ -1,5 +1,5 @@
 package toDoListProject.components.entities.task;
 
-public interface ITask {
+public interface Task {
     String getSomeData();
 }

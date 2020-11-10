@@ -1,27 +1,32 @@
 package toDoListProject.components.presenters.console;
 
-import toDoListProject.components.entities.task.ITask;
-import toDoListProject.components.interactors.IRequest;
+import toDoListProject.components.interactors.IInteractor;
+import toDoListProject.components.interactors.UserNotFoundException;
 import toDoListProject.components.presenters.IPresenter;
 
 public class Console implements IPresenter {
-    @Override
-    public ITask createTask() {
-        return null;
+    private final IInteractor iInteractor;
+
+    public Console(IInteractor iInteractor) {
+        this.iInteractor = iInteractor;
     }
 
     @Override
-    public String deleteTask() {
-        return null;
+    public void start() {
+        //example
+        try {
+            iInteractor.deleteUser("abc");
+        } catch (UserNotFoundException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+
+        } finally {
+
+        }
     }
 
     @Override
-    public boolean haveRequest() {
-        return false;
-    }
+    public void stop() {
 
-    @Override
-    public IRequest getRequest() {
-        return null;
     }
 }
