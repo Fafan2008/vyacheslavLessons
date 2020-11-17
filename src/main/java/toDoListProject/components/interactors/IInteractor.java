@@ -2,8 +2,10 @@ package toDoListProject.components.interactors;
 
 import toDoListProject.components.entities.task.Task;
 import toDoListProject.components.entities.task.UpdateTask;
-import toDoListProject.components.entities.user.UpdateUser;
-import toDoListProject.components.entities.user.User;
+import toDoListProject.components.entities.user.IUpdateUser;
+import toDoListProject.components.interactors.exceptions.TaskNotFoundException;
+import toDoListProject.components.interactors.exceptions.UserNotFoundException;
+import toDoListProject.components.interactors.exceptions.UsernameExistsException;
 
 import java.util.List;
 
@@ -13,9 +15,9 @@ public interface IInteractor {
     Task updateTask(String taskId, UpdateTask update) throws TaskNotFoundException;
 
     //--//--
-    boolean addUser(UpdateUser user) throws UsernameExistsException;
+    boolean addUser(IUpdateUser user) throws UsernameExistsException;
     boolean deleteUser(String userId) throws UserNotFoundException;
-    boolean updateUser(String userId, UpdateUser update) throws UserNotFoundException, UsernameExistsException;
+    boolean updateUser(String userId, IUpdateUser update) throws UserNotFoundException, UsernameExistsException;
 
 //    Task getTask(String taskId) ;
 //    User getUser(String userId);
@@ -24,6 +26,8 @@ public interface IInteractor {
     default List<Task> getTaskList(String userId) throws UserNotFoundException{
         return getTaskList(userId, false);
     }
+
+    boolean isUserPresent(String name);
 }
 
 

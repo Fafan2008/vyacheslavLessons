@@ -2,7 +2,7 @@ package toDoListProject.components.repositories.dispetcher;
 
 import toDoListProject.components.entities.task.Task;
 import toDoListProject.components.entities.task.UpdateTask;
-import toDoListProject.components.entities.user.UpdateUser;
+import toDoListProject.components.entities.user.IUpdateUser;
 import toDoListProject.components.entities.user.User;
 
 import java.util.List;
@@ -16,7 +16,7 @@ public interface IDispatcher {
     //--//--
     boolean addUser(User user);
     boolean deleteUser(String id);
-    boolean updateUser(UpdateUser update);
+    boolean updateUser(IUpdateUser update);
 
     Optional<Task> getTask(String taskId);
     Optional<User> getUser(String userId);

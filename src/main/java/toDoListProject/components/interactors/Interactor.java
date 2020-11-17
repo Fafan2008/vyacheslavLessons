@@ -5,7 +5,10 @@ package toDoListProject.components.interactors;
 
 import toDoListProject.components.entities.task.Task;
 import toDoListProject.components.entities.task.UpdateTask;
-import toDoListProject.components.entities.user.UpdateUser;
+import toDoListProject.components.entities.user.IUpdateUser;
+import toDoListProject.components.interactors.exceptions.TaskNotFoundException;
+import toDoListProject.components.interactors.exceptions.UserNotFoundException;
+import toDoListProject.components.interactors.exceptions.UsernameExistsException;
 import toDoListProject.components.repositories.dispetcher.IDispatcher;
 
 import java.util.List;
@@ -36,7 +39,7 @@ public class Interactor implements IInteractor {
     }
 
     @Override
-    public boolean addUser(UpdateUser user) throws UsernameExistsException {
+    public boolean addUser(IUpdateUser user) throws UsernameExistsException {
         return false;
     }
 
@@ -46,12 +49,17 @@ public class Interactor implements IInteractor {
     }
 
     @Override
-    public boolean updateUser(String userId, UpdateUser update) throws UserNotFoundException, UsernameExistsException {
+    public boolean updateUser(String userId, IUpdateUser update) throws UserNotFoundException, UsernameExistsException {
         return false;
     }
 
     @Override
     public List<Task> getTaskList(String userId, boolean onlyOpened) throws UserNotFoundException {
         return null;
+    }
+
+    @Override
+    public boolean isUserPresent(String name) {
+        return iDispetcher.getUser(name).isPresent();
     }
 }

@@ -1,5 +1,9 @@
 package toDoListProject.components.entities.task;
 
-public interface UpdateTask {
-    String getId();
+public class UpdateTask {
+    private final String name;
+
+    public UpdateTask(String name) {
+        this.name = name;
+    }
 }

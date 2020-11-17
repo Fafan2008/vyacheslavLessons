@@ -2,13 +2,16 @@ package toDoListProject.components.repositories.dispetcher;
 
 import toDoListProject.components.entities.task.Task;
 import toDoListProject.components.entities.task.UpdateTask;
-import toDoListProject.components.entities.user.UpdateUser;
+import toDoListProject.components.entities.user.IUpdateUser;
 import toDoListProject.components.entities.user.User;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class Dispatcher implements IDispatcher {
+    private Map<String, User> dbUser;
+
     @Override
     public Task addTask(UpdateTask task) {
         return null;
@@ -35,7 +38,7 @@ public class Dispatcher implements IDispatcher {
     }
 
     @Override
-    public boolean updateUser(UpdateUser update) {
+    public boolean updateUser(IUpdateUser update) {
         return false;
     }
 
@@ -46,7 +49,7 @@ public class Dispatcher implements IDispatcher {
 
     @Override
     public Optional<User> getUser(String userId) {
-        return Optional.empty();
+        return Optional.ofNullable(dbUser.get(userId));
     }
 
     @Override
