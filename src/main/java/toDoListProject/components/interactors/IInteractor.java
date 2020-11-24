@@ -8,9 +8,10 @@ import toDoListProject.components.interactors.exceptions.UserNotFoundException;
 import toDoListProject.components.interactors.exceptions.UsernameExistsException;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface IInteractor {
-    Task addTask(UpdateTask task);
+    Optional<Task> addTask(String userID, UpdateTask task);
     void deleteTask(String taskId) throws TaskNotFoundException;
     Task updateTask(String taskId, UpdateTask update) throws TaskNotFoundException;
 

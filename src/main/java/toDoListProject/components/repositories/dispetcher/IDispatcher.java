@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IDispatcher {
-    Task addTask(UpdateTask task);
+    Optional<Task> addTask(UpdateTask task);
     boolean deleteTask(String taskId);
     Task updateTask(String taskId, UpdateTask update);
 
