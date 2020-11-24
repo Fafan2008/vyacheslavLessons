@@ -5,16 +5,20 @@ import toDoListProject.components.entities.task.UpdateTask;
 import toDoListProject.components.entities.user.IUpdateUser;
 import toDoListProject.components.entities.user.User;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class Dispatcher implements IDispatcher {
-    private Map<String, User> dbUser;
+    private Map<String, User> dbUsers = new HashMap<>();
+    private Map<String, Task> dbTasks = new HashMap<>();
 
     @Override
-    public Task addTask(UpdateTask task) {
-        return null;
+    public Optional<Task> addTask(UpdateTask updateTask) {
+        if(!getUser(updateTask.userId()).isPresent())
+            return Optional.empty();
+        String uuid = UUID.randomUUID().toString();
+        Task newTask = new Task(uuid, updateTask.userId(), updateTask.Name(), updateTask.Description(), new Date());
+        dbTasks.put(uuid, newTask);
+        return Optional.of(newTask);
     }
 
     @Override
@@ -29,7 +33,12 @@ public class Dispatcher implements IDispatcher {
 
     @Override
     public boolean addUser(User user) {
-        return false;
+        if (dbUsers.containsKey(user.getId()))
+            return false;
+        else {
+            dbUsers.put(user.getId(), user);
+            return true;
+        }
     }
 
     @Override
@@ -49,7 +58,8 @@ public class Dispatcher implements IDispatcher {
 
     @Override
     public Optional<User> getUser(String userId) {
-        return Optional.ofNullable(dbUser.get(userId));
+        User us = dbUsers.get(userId);
+        return Optional.ofNullable(dbUsers.get(userId));
     }
 
     @Override

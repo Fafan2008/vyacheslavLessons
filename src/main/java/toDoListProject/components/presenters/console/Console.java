@@ -15,6 +15,8 @@ import java.util.Scanner;
 public class Console implements IPresenter {
     private final IInteractor iInteractor;
     private boolean authentificated = false;
+    private boolean work = true;
+    private String userName;
 
     public Console(IInteractor iInteractor) {
         this.iInteractor = iInteractor;
@@ -22,10 +24,9 @@ public class Console implements IPresenter {
 
     @Override
     public void start() {
-        //example
         while (work){
             if(!authentificated){
-                authentificate();
+                authenticated();
             }
             else{
                 Display.menu();
@@ -33,26 +34,17 @@ public class Console implements IPresenter {
                 execute(cmd);
             }
         }
-//        try {
-//            iInteractor.deleteUser("abc");
-//        } catch (UserNotFoundException e) {
-//            e.printStackTrace();
-//        } catch (Exception e) {
-//
-//        } finally {
-//
-//        }
     }
 
     private void execute(Command cmd) {
         switch (cmd){
             case ADD:
-                UpdateTask update = enterTask();
-                iInteractor.addTask(update);
+                addTask();
                 break;
             case DEL:
                 break;
             case OBS:
+                observeTasks();
                 break;
             case EXT:
                 stop();
@@ -60,40 +52,59 @@ public class Console implements IPresenter {
         }
     }
 
+    private void observeTasks() {
+        try {
+            iInteractor.getTaskList(userName);
+        } catch (UserNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void addTask() {
+        UpdateTask update = enterTask();
+        if (!iInteractor.addTask(userName, update).isPresent())
+            Display.unsuccessful();
+        else
+            Display.successful();
+    }
+
     private UpdateTask enterTask() {
-        //enter some data of task
-        return new UpdateTask("name");
+        String nameTask = enterNameOfTask();
+        String descriptionOfTask = enterDescriptionOfTask();
+        return new UpdateTask(userName, nameTask, descriptionOfTask);
     }
 
     private Command enterCmd() {
+        Display.enterCmd();
         Scanner scanner = new Scanner(System.in);
         String word = scanner.nextLine();
         Command cmd = Command.fromString(word);
         return cmd;
     }
 
-    private void authentificate() {
-        authentificated = doLogin();
+    private void authenticated() {
+        this.authentificated = doLogin();
     }
 
     private boolean doLogin() {
-        Display.enterLogin();
         String name = enterLogin();
         if(this.iInteractor.isUserPresent(name)){
             this.userName = name;
-            Display.successfullLogin();
+            Display.successful();
             return true;
         }else {
-            Display.unsuccessfullLogin();
+            Display.unsuccessful();
             Display.doYouWantAddNewUser();
             boolean want = enterYesNo();
             if(want){
-                IUpdateUser user = new UpdateUser(name);
+                String surname = enterSurname();
+                IUpdateUser user = new UpdateUser(name, surname);
                 try {
                     iInteractor.addUser(user);
+                    Display.successfulAddingNewUser();
                 } catch (UsernameExistsException e) {
                     e.printStackTrace();
-                    Display.unsuccessfullLogin();
+                    Display.unsuccessful();
                     return false;
                 }
             }
@@ -103,22 +114,34 @@ public class Console implements IPresenter {
     }
 
     private boolean enterYesNo() {
+        System.out.print("Enter yes or no :");
         Scanner scanner = new Scanner(System.in);
         String name = new String();
         name = scanner.nextLine();
         return StringParser.ToBoolean(name);
     }
-
     private String enterLogin() {
+        Display.enterLogin();
         Scanner scanner = new Scanner(System.in);
         return scanner.nextLine();
     }
-
+    private String enterSurname() {
+        Display.enterSurname();
+        Scanner scanner = new Scanner(System.in);
+        return scanner.nextLine();
+    }
+    private String enterNameOfTask() {
+        Display.enterNameOfTask();
+        Scanner scanner = new Scanner(System.in);
+        return scanner.nextLine();
+    }
+    private String enterDescriptionOfTask() {
+        Display.enterDescriptionOfTask();
+        Scanner scanner = new Scanner(System.in);
+        return scanner.nextLine();
+    }
     @Override
     public void stop() {
-        work = false;
+        this.work = false;
     }
-
-    private boolean work = true;
-    private String userName;
 }
