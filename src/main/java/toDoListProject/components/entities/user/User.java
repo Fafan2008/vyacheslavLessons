@@ -1,17 +1,16 @@
 package toDoListProject.components.entities.user;
 
+import java.util.Date;
+
 public class User {
     final private String id;
     final private String surname;
+    final private Date created;
 
-    static public User create(IUpdateUser update){
-        User user = new User(update.getId(), update.getSurname());
-        return user;
-    }
-
-    private User(String id, String surname) {
+    public User(String id, String surname, Date created) {
         this.id = id;
         this.surname = surname;
+        this.created = created;
     }
 
     public String getId() {

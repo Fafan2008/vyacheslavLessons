@@ -1,22 +1,29 @@
 package toDoListProject.components.presenters.console;
 
+import com.sun.deploy.cache.BaseLocalApplicationProperties;
+import toDoListProject.components.entities.task.Task;
 import toDoListProject.components.entities.task.UpdateTask;
-import toDoListProject.components.entities.user.IUpdateUser;
 import toDoListProject.components.entities.user.UpdateUser;
 import toDoListProject.components.interactors.IInteractor;
+import toDoListProject.components.interactors.exceptions.NotHavePermission;
+import toDoListProject.components.interactors.exceptions.TaskNotFoundException;
 import toDoListProject.components.interactors.exceptions.UserNotFoundException;
 import toDoListProject.components.interactors.exceptions.UsernameExistsException;
 import toDoListProject.components.presenters.IPresenter;
 import toDoListProject.components.presenters.console.additinalPackage.Command;
 import toDoListProject.components.presenters.console.additinalPackage.StringParser;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Console implements IPresenter {
     private final IInteractor iInteractor;
     private boolean authentificated = false;
     private boolean work = true;
     private String userName;
+    private Map<Integer, Task> tasks = new HashMap<>();
 
     public Console(IInteractor iInteractor) {
         this.iInteractor = iInteractor;
@@ -37,19 +44,51 @@ public class Console implements IPresenter {
     }
 
     private void execute(Command cmd) {
-        switch (cmd){
-            case ADD:
-                addTask();
-                break;
-            case DEL:
-                break;
-            case OBS:
-                observeTasks();
-                break;
-            case EXT:
-                stop();
-                break;
+            switch (cmd){
+                case ADD:
+                    addTask();
+                    break;
+                case DEL:
+                    deleteTask();
+                    break;
+                case OBS:
+                    observeTasks();
+                    break;
+                case EXT:
+                    stop();
+                    break;
+            }
+    }
+
+    private void deleteTask() {
+        Task task = chooseTask();
+        UpdateTask update = new UpdateTask(this.userName, task.getName(), task.getDescription(), task.isOpen());
+            try {
+                iInteractor.deleteTask(task.getId(), update);
+            } catch (TaskNotFoundException e) {
+                e.printStackTrace();
+            } catch (NotHavePermission notHavePermission) {
+                notHavePermission.printStackTrace();
+            }
         }
+
+    private Task chooseTask() {
+        String str = enterNameOrNumberOfTask();
+        if (StringParser.isNumeric(str)){
+            int num = Integer.parseInt(str);
+            Task task = this.tasks.get(num);
+
+            if (task == null)
+                this.tasks.values().stream().filter((item)->item.getName() == str).collect(Collectors.toList());
+            //throw new TaskNotFoundException();
+        }
+        return null;
+    }
+
+    private String enterNameOrNumberOfTask() {
+        Display.EnterNameOrNumberOfTask();
+        Scanner scanner = new Scanner(System.in);
+        return scanner.nextLine();
     }
 
     private void observeTasks() {
@@ -62,7 +101,7 @@ public class Console implements IPresenter {
 
     private void addTask() {
         UpdateTask update = enterTask();
-        if (!iInteractor.addTask(userName, update).isPresent())
+        if (!iInteractor.addTask(update).isPresent())
             Display.unsuccessful();
         else
             Display.successful();
@@ -71,7 +110,7 @@ public class Console implements IPresenter {
     private UpdateTask enterTask() {
         String nameTask = enterNameOfTask();
         String descriptionOfTask = enterDescriptionOfTask();
-        return new UpdateTask(userName, nameTask, descriptionOfTask);
+        return new UpdateTask(userName, nameTask, descriptionOfTask, false);
     }
 
     private Command enterCmd() {
@@ -98,7 +137,7 @@ public class Console implements IPresenter {
             boolean want = enterYesNo();
             if(want){
                 String surname = enterSurname();
-                IUpdateUser user = new UpdateUser(name, surname);
+                UpdateUser user = new UpdateUser(name, surname);
                 try {
                     iInteractor.addUser(user);
                     Display.successfulAddingNewUser();

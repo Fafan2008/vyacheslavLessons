@@ -42,4 +42,8 @@ public class Display {
     public static void enterDescriptionOfTask() {
         System.out.print("Pls enter Description Of Task: ");
     }
+
+    public static void EnterNameOrNumberOfTask() {
+        System.out.print("Pls enter Name or Number Of Task: ");
+    }
 }

@@ -11,4 +11,12 @@ public class StringParser {
             return false;
         throw new IllegalArgumentException("Bad input for stringToBoolean: " + input);
     }
+    public static boolean isNumeric(String str) {
+        try {
+            Integer.parseInt(str);
+            return true;
+        } catch(NumberFormatException e){
+            return false;
+        }
+    }
 }

@@ -8,13 +8,15 @@ public class Task {
     private final String name;
     private final String description;
     private final Date created;
+    private final Boolean isOpen;
 
-    public Task(String id, String userId, String name, String description, Date created){
+    public Task(String id, String userId, String name, String description, Boolean isOpen, Date created){
         this.id = id;
         this.userId = userId;
         this.name = name;
-        this.created = created;
         this.description = description;
+        this.isOpen = isOpen;
+        this.created = created;
     }
 
     public String getId() {
@@ -23,6 +25,11 @@ public class Task {
     public String getName() {
         return this.name;
     }
-    public String getDescription() { return description; }
-    public Date getCreated() { return created; }
+    public String getDescription() { return this.description; }
+    public Date getCreated() { return this.created; }
+    public Boolean isOpen() { return this.isOpen; }
+
+    public String getOwner() {
+        return this.userId;
+    }
 }
