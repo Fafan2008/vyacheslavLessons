@@ -1,7 +1,6 @@
 package WebToDoList.App;
 
 import WebToDoList.Console.AppConsole;
-import WebToDoList.Console.Command;
 import WebToDoList.DataBase.Db;
 import WebToDoList.DataBase.Dispetcher;
 import WebToDoList.Interfaces.AppWeb.AppWeb;
@@ -13,6 +12,8 @@ import java.util.Scanner;
 //how use console input in IntelIdea
 //        https://examples.javacodegeeks.com/java-input-example/
 //        https://data-flair.training/blogs/read-java-console-input/
+
+// Касательно логирования https://www.cyberforum.ru/java-j2se/thread1682804.html
 
 public class Application {
     private Db db = new Db();

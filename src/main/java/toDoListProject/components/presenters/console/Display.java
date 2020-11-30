@@ -10,23 +10,25 @@ public class Display {
         System.out.println("4) CMND /ext \"Turn off pc power.\" ");
     }
     public static void enterLogin(){
-        System.out.println("Pls enter username: ");
+        System.out.print("Pls enter login name: ");
     }
 
     public static void successful() {
         System.out.println("Successful !");
     }
-
+    public static void successfulAddingNewUser() {
+        System.out.println("Successful adding new user!");
+    }
     public static void unsuccessful() {
         System.out.println("Unsuccessful !");
     }
 
     public static void doYouWantAddNewUser() {
-        System.out.println("Do you want add new user? :");
+        System.out.println("Do you want add new user? : ");
     }
 
     public static void enterSurname() {
-        System.out.println("Pls enter Surname: ");
+        System.out.print("Pls enter Surname: ");
     }
 
     public static void enterCmd() {

@@ -4,6 +4,7 @@ import toDoListProject.components.entities.task.UpdateTask;
 import toDoListProject.components.entities.user.IUpdateUser;
 import toDoListProject.components.entities.user.UpdateUser;
 import toDoListProject.components.interactors.IInteractor;
+import toDoListProject.components.interactors.exceptions.UserNotFoundException;
 import toDoListProject.components.interactors.exceptions.UsernameExistsException;
 import toDoListProject.components.presenters.IPresenter;
 import toDoListProject.components.presenters.console.additinalPackage.Command;
@@ -38,20 +39,33 @@ public class Console implements IPresenter {
     private void execute(Command cmd) {
         switch (cmd){
             case ADD:
-                UpdateTask update = enterTask();
-                if (iInteractor.addTask(userName, update).isPresent())
-                    Display.unsuccessful();
-                else
-                    Display.successful();
+                addTask();
                 break;
             case DEL:
                 break;
             case OBS:
+                observeTasks();
                 break;
             case EXT:
                 stop();
                 break;
         }
+    }
+
+    private void observeTasks() {
+        try {
+            iInteractor.getTaskList(userName);
+        } catch (UserNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void addTask() {
+        UpdateTask update = enterTask();
+        if (!iInteractor.addTask(userName, update).isPresent())
+            Display.unsuccessful();
+        else
+            Display.successful();
     }
 
     private UpdateTask enterTask() {
@@ -87,6 +101,7 @@ public class Console implements IPresenter {
                 IUpdateUser user = new UpdateUser(name, surname);
                 try {
                     iInteractor.addUser(user);
+                    Display.successfulAddingNewUser();
                 } catch (UsernameExistsException e) {
                     e.printStackTrace();
                     Display.unsuccessful();
