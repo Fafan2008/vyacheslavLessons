@@ -26,7 +26,7 @@ public class DBMemory implements IDB {
             dbLinkUserTasks.put(userID, new HashSet<>());
         }
         dbLinkUserTasks.get(userID).add(uuid);
-        return Optional.of(newTask);
+        return Optional.ofNullable(dbTasks.get(uuid));
     }
 
     @Override
@@ -50,7 +50,7 @@ public class DBMemory implements IDB {
             Task oldTask = dbTasks.get(taskId);
             Task newTask = new Task(taskId, update.userId(), update.Name(), update.Description(), update.isOpen(), oldTask.getCreated());
             dbTasks.put(taskId, newTask);
-            return Optional.of(newTask);
+            return Optional.ofNullable(dbTasks.get(taskId));
         }
         return Optional.empty();
     }
@@ -59,7 +59,10 @@ public class DBMemory implements IDB {
     public List<Task> getTaskList(String userId, boolean onlyOpened) {
 
         if(dbLinkUserTasks.containsKey(userId)){
-            return dbLinkUserTasks.get(userId).stream().map((id)-> dbTasks.get(id)).filter(task -> task.isOpen() == onlyOpened).collect(Collectors.toList());
+            if(onlyOpened)
+                return dbLinkUserTasks.get(userId).stream().map((id)-> dbTasks.get(id)).filter(task -> task.isOpen()).collect(Collectors.toList());
+            else
+                return dbLinkUserTasks.get(userId).stream().map((id)-> dbTasks.get(id)).collect(Collectors.toList());
         }
         return new ArrayList<>();
     }
@@ -69,6 +72,7 @@ public class DBMemory implements IDB {
         if (!dbUsers.containsKey(update.getId())){
             User newUser = new User(update.getId(), update.getSurname(), new Date());
             dbUsers.put(update.getId(), newUser);
+            return Optional.ofNullable(dbUsers.get(update.getId()));
         }
         return Optional.empty();
     }

@@ -1,5 +1,12 @@
 package toDoListProject.components.presenters.console;
 
+import toDoListProject.components.entities.task.Task;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 public class Display {
     public static void menu(){
         System.out.println("Actions: ");
@@ -45,5 +52,18 @@ public class Display {
 
     public static void EnterNameOrNumberOfTask() {
         System.out.print("Pls enter Name or Number Of Task: ");
+    }
+
+    public static void show(Map<Integer, Task> mapTasks) {
+        if (mapTasks.isEmpty())
+            System.out.println("You haven't tasks.");
+        else{
+            List<Integer> tasksByKey = new ArrayList<>(mapTasks.keySet());
+            Collections.sort(tasksByKey);
+            for (Integer num: tasksByKey) {
+                System.out.println( num.getClass() + num.toString() + mapTasks.get(num).getName() + mapTasks.get(num).getDescription());
+            }
+        }
+
     }
 }

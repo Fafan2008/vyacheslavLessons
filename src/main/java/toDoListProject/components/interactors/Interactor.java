@@ -21,7 +21,16 @@ public class Interactor implements IInteractor {
     public boolean addUser(UpdateUser updateUser) throws UsernameExistsException {
         if(isUserPresent(updateUser.getId()))
             throw new UsernameExistsException();
-        return IDB.addUser(updateUser).isPresent();
+        Optional<User> user = IDB.addUser(updateUser);
+        return user.isPresent();
+    }
+
+    @Override
+    public User getUser(UpdateUser update) throws UserNotFoundException {
+        if(isUserPresent(update.getId()))
+            return IDB.getUser(update.getId()).get();
+        else
+            throw new UserNotFoundException();
     }
 
     @Override

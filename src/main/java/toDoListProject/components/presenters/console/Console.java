@@ -1,6 +1,5 @@
 package toDoListProject.components.presenters.console;
 
-import com.sun.deploy.cache.BaseLocalApplicationProperties;
 import toDoListProject.components.entities.task.Task;
 import toDoListProject.components.entities.task.UpdateTask;
 import toDoListProject.components.entities.user.UpdateUser;
@@ -13,15 +12,13 @@ import toDoListProject.components.presenters.IPresenter;
 import toDoListProject.components.presenters.console.additinalPackage.Command;
 import toDoListProject.components.presenters.console.additinalPackage.StringParser;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class Console implements IPresenter {
     private final IInteractor iInteractor;
-    private boolean authentificated = false;
-    private boolean work = true;
+    private boolean work = false;
     private String userName;
     private Map<Integer, Task> tasks = new HashMap<>();
 
@@ -31,58 +28,74 @@ public class Console implements IPresenter {
 
     @Override
     public void start() {
-        while (work){
-            if(!authentificated){
-                authenticated();
-            }
-            else{
-                Display.menu();
-                Command cmd = enterCmd();
-                execute(cmd);
-            }
+        if (authenticated()) {
+            Display.menu();
+            work = true;
+        }
+        while (work) {
+            Command cmd = enterCmd();
+            execute(cmd);
         }
     }
 
     private void execute(Command cmd) {
-            switch (cmd){
-                case ADD:
-                    addTask();
-                    break;
-                case DEL:
-                    deleteTask();
-                    break;
-                case OBS:
-                    observeTasks();
-                    break;
-                case EXT:
-                    stop();
-                    break;
-            }
+        switch (cmd) {
+            case ADD:
+                addTask();
+                break;
+            case DEL:
+                deleteTask();
+                break;
+            case OBS:
+                observeTasks();
+                break;
+            case EXT:
+                stop();
+                break;
+            case HLP:
+                Display.menu();
+                break;
+        }
     }
 
     private void deleteTask() {
-        Task task = chooseTask();
-        UpdateTask update = new UpdateTask(this.userName, task.getName(), task.getDescription(), task.isOpen());
+        Optional<Task> task = chooseTask(this.tasks);
+        if (task.isPresent()) {
+            UpdateTask update = new UpdateTask(this.userName, task.get().getName(), task.get().getDescription(), task.get().isOpen());
             try {
-                iInteractor.deleteTask(task.getId(), update);
-            } catch (TaskNotFoundException e) {
+                iInteractor.deleteTask(task.get().getId(), update);
+            } catch (TaskNotFoundException | NotHavePermission e) {
                 e.printStackTrace();
-            } catch (NotHavePermission notHavePermission) {
-                notHavePermission.printStackTrace();
             }
         }
+    }
 
-    private Task chooseTask() {
+
+    private Optional<Task> chooseTask(Map<Integer, Task> mapTasks) {
+        if (mapTasks.isEmpty())
+            return Optional.empty();
+        Display.show(mapTasks);
         String str = enterNameOrNumberOfTask();
-        if (StringParser.isNumeric(str)){
-            int num = Integer.parseInt(str);
-            Task task = this.tasks.get(num);
+        Map<Integer, Task> newMapTasks = new HashMap<>();
+        AtomicInteger count = new AtomicInteger();
+        count.set(0);
 
-            if (task == null)
-                this.tasks.values().stream().filter((item)->item.getName() == str).collect(Collectors.toList());
-            //throw new TaskNotFoundException();
+        //Если было введно число, то пытаемся достать по номеру из mapTasks
+        if (StringParser.isNumeric(str)) {
+            int num = Integer.parseInt(str);
+            Task task = mapTasks.get(num);
+            if (task != null)
+                newMapTasks.put(count.getAndIncrement(), task);
         }
-        return null;
+        // Так же проверяем есть ли задача с похожим названием.
+        mapTasks.values().stream().filter((item) -> item.getName().equals(str)).forEach((item) -> newMapTasks.put(count.getAndIncrement(), item));
+        //mapTasks.values().stream().filter((task -> task.getName().equals(str))).peek((item -> newMapTasks.put(count.getAndIncrement(), item)));
+        if (newMapTasks.isEmpty())
+            return Optional.empty();
+        if (newMapTasks.size() == 1)
+            return Optional.ofNullable(newMapTasks.get(0));
+        // Если в выборе оказалось больше чем одна задача повторяем операцию.
+        return chooseTask(newMapTasks);
     }
 
     private String enterNameOrNumberOfTask() {
@@ -92,11 +105,25 @@ public class Console implements IPresenter {
     }
 
     private void observeTasks() {
+        Map<Integer, Task> freshList = requestTasks();
+        Display.show(freshList);
+    }
+
+    private Map<Integer, Task> requestTasks() {
         try {
-            iInteractor.getTaskList(userName);
+            List<Task> tasks = iInteractor.getTaskList(userName);
+            List<Task> sortedTasks = tasks.stream()
+                    .sorted(Comparator.comparing(Task::getName))
+                    .collect(Collectors.toList());
+            this.tasks.clear();
+            for (int i = 0; i < sortedTasks.size(); i++) {
+                this.tasks.put(i, sortedTasks.get(i));
+            }
+            return this.tasks;
         } catch (UserNotFoundException e) {
             e.printStackTrace();
         }
+        return new HashMap<>();
     }
 
     private void addTask() {
@@ -117,68 +144,77 @@ public class Console implements IPresenter {
         Display.enterCmd();
         Scanner scanner = new Scanner(System.in);
         String word = scanner.nextLine();
-        Command cmd = Command.fromString(word);
-        return cmd;
+        return Command.fromString(word);
     }
 
-    private void authenticated() {
-        this.authentificated = doLogin();
+    private boolean authenticated() {
+        return doLogin();
     }
 
     private boolean doLogin() {
         String name = enterLogin();
-        if(this.iInteractor.isUserPresent(name)){
+        if (this.iInteractor.isUserPresent(name)) {
             this.userName = name;
             Display.successful();
             return true;
-        }else {
+        } else {
             Display.unsuccessful();
             Display.doYouWantAddNewUser();
-            boolean want = enterYesNo();
-            if(want){
+            boolean want = false;
+            try {
+                want = enterYesNo();
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            }
+            if (want) {
                 String surname = enterSurname();
                 UpdateUser user = new UpdateUser(name, surname);
                 try {
-                    iInteractor.addUser(user);
+                    if(iInteractor.addUser(user))
+                        this.userName = iInteractor.getUser(user).getId();
                     Display.successfulAddingNewUser();
-                } catch (UsernameExistsException e) {
+                    return true;
+                } catch (UsernameExistsException | UserNotFoundException e) {
                     e.printStackTrace();
                     Display.unsuccessful();
-                    return false;
                 }
             }
-            return false;
         }
-
+        return false;
     }
 
-    private boolean enterYesNo() {
+    private boolean enterYesNo() throws IllegalArgumentException {
         System.out.print("Enter yes or no :");
         Scanner scanner = new Scanner(System.in);
-        String name = new String();
+        String name;
         name = scanner.nextLine();
         return StringParser.ToBoolean(name);
     }
+
     private String enterLogin() {
         Display.enterLogin();
         Scanner scanner = new Scanner(System.in);
         return scanner.nextLine();
     }
+
     private String enterSurname() {
         Display.enterSurname();
         Scanner scanner = new Scanner(System.in);
         return scanner.nextLine();
     }
+
     private String enterNameOfTask() {
         Display.enterNameOfTask();
         Scanner scanner = new Scanner(System.in);
         return scanner.nextLine();
     }
+
     private String enterDescriptionOfTask() {
         Display.enterDescriptionOfTask();
         Scanner scanner = new Scanner(System.in);
         return scanner.nextLine();
     }
+
     @Override
     public void stop() {
         this.work = false;

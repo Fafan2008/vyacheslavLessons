@@ -3,6 +3,7 @@ package toDoListProject.components.interactors;
 import toDoListProject.components.entities.task.Task;
 import toDoListProject.components.entities.task.UpdateTask;
 import toDoListProject.components.entities.user.UpdateUser;
+import toDoListProject.components.entities.user.User;
 import toDoListProject.components.interactors.exceptions.*;
 
 import java.util.List;
@@ -13,8 +14,8 @@ public interface IInteractor {
     void deleteTask(String taskId, UpdateTask updateTask) throws TaskNotFoundException, NotHavePermission;
     Task updateTask(String taskId, UpdateTask update) throws TaskNotFoundException, NotHavePermission, TaskUpdateOperationFail;
 
-    //--//--
-    boolean addUser(UpdateUser user) throws UsernameExistsException;
+    User getUser(UpdateUser update) throws UserNotFoundException;
+    boolean addUser(UpdateUser update) throws UsernameExistsException;
     boolean deleteUser(String userId) throws UserNotFoundException;
     boolean updateUser(String userId, UpdateUser update) throws UserNotFoundException, UsernameExistsException;
 

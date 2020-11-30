@@ -1,7 +1,7 @@
 package toDoListProject.components.presenters.console.additinalPackage;
 
 public class StringParser {
-    static public boolean ToBoolean(String input) {
+    static public boolean ToBoolean(String input) throws IllegalArgumentException {
         if (input == null)
             throw new IllegalArgumentException("Null input for stringToBoolean");
         input = input.trim().toLowerCase();

@@ -6,6 +6,7 @@ public enum Command {
     DEL("/del"),
     UPD("/upd"),
     EXT("/ext"),
+    HLP("/hlp"),
     UND(null);
     private String text;
 
