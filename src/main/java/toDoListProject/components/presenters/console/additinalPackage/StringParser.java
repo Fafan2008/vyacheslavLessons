@@ -5,9 +5,9 @@ public class StringParser {
         if (input == null)
             throw new IllegalArgumentException("Null input for stringToBoolean");
         input = input.trim().toLowerCase();
-        if (input.equals("1") || input.equals("yes") || input.equals("true"))
+        if (input.equals("1") || input.equals("yes") || input.equals("y") || input.equals("true") || input.equals("t"))
             return true;
-        if (input.equals("0") || input.equals("no") || input.equals("false"))
+        if (input.equals("0") || input.equals("no")|| input.equals("n") || input.equals("false") || input.equals("f"))
             return false;
         throw new IllegalArgumentException("Bad input for stringToBoolean: " + input);
     }

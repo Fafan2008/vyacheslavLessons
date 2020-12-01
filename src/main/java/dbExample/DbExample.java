@@ -16,7 +16,7 @@ public class DbExample {
             Connection connection = DriverManager
                     .getConnection("jdbc:h2:file:C:\\полный путь к базе через двойные слэши");
             Statement statement = connection.createStatement();
-            //statement.executeUpdate("create table table2(id int)");
+//            statement.executeUpdate("create table table2(id int)");
 //            statement.executeUpdate("insert into table2 (id) values (11)");
 //            statement.executeUpdate("insert into table2 (id) values (22)");
 //            statement.executeUpdate("insert into table2 (id) values (33)");

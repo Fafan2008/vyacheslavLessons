@@ -13,6 +13,5 @@ public class Application {
         IInteractor interactor = new Interactor(dispetcher);
         IPresenter iPresenter = new Console(interactor);
         iPresenter.start();
-
     }
 }

@@ -4,13 +4,12 @@ import toDoListProject.components.entities.task.Task;
 import toDoListProject.components.entities.task.UpdateTask;
 import toDoListProject.components.entities.user.UpdateUser;
 import toDoListProject.components.interactors.IInteractor;
-import toDoListProject.components.interactors.exceptions.NotHavePermission;
-import toDoListProject.components.interactors.exceptions.TaskNotFoundException;
-import toDoListProject.components.interactors.exceptions.UserNotFoundException;
-import toDoListProject.components.interactors.exceptions.UsernameExistsException;
+import toDoListProject.components.interactors.exceptions.*;
 import toDoListProject.components.presenters.IPresenter;
 import toDoListProject.components.presenters.console.additinalPackage.Command;
+import toDoListProject.components.presenters.console.additinalPackage.Input;
 import toDoListProject.components.presenters.console.additinalPackage.StringParser;
+import toDoListProject.components.presenters.console.additinalPackage.TaskPart;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -20,7 +19,7 @@ public class Console implements IPresenter {
     private final IInteractor iInteractor;
     private boolean work = false;
     private String userName;
-    private Map<Integer, Task> tasks = new HashMap<>();
+    private final Map<Integer, Task> tasks = new HashMap<>();
 
     public Console(IInteractor iInteractor) {
         this.iInteractor = iInteractor;
@@ -28,8 +27,9 @@ public class Console implements IPresenter {
 
     @Override
     public void start() {
-        if (authenticated()) {
+        if (authenticate()) {
             Display.menu();
+            requestTasks();
             work = true;
         }
         while (work) {
@@ -38,10 +38,18 @@ public class Console implements IPresenter {
         }
     }
 
+    @Override
+    public void stop() {
+        this.work = false;
+    }
+
     private void execute(Command cmd) {
         switch (cmd) {
             case ADD:
                 addTask();
+                break;
+            case UPD:
+                updateTask();
                 break;
             case DEL:
                 deleteTask();
@@ -58,50 +66,74 @@ public class Console implements IPresenter {
         }
     }
 
-    private void deleteTask() {
-        Optional<Task> task = chooseTask(this.tasks);
-        if (task.isPresent()) {
-            UpdateTask update = new UpdateTask(this.userName, task.get().getName(), task.get().getDescription(), task.get().isOpen());
-            try {
-                iInteractor.deleteTask(task.get().getId(), update);
-            } catch (TaskNotFoundException | NotHavePermission e) {
-                e.printStackTrace();
+    private void updateTask() {
+        try {
+            Optional<Task> task = chooseTask(this.tasks);
+            if (task.isPresent()) {
+                Display.show(task.get());
+                Display.whatYouWantChange();
+                TaskPart part = TaskPart.fromString(Input.string());
+                UpdateTask update = null;
+                switch (part) {
+                    case NAME:
+                        String nameTask = Input.nameOfTask();
+                        update = new UpdateTask(task.get().getOwner(), nameTask, task.get().getDescription(), task.get().isOpen());
+                        break;
+                    case DESCRIPTION:
+                        String descriptionTask = Input.descriptionOfTask();
+                        update = new UpdateTask(task.get().getOwner(), task.get().getName(), descriptionTask, task.get().isOpen());
+                        break;
+                    case UND:
+                        Display.unsuccessful();
+                        break;
+                }
+                Display.doYouAgree();
+                if (Input.yesNo()) {
+                    Task newTask = iInteractor.updateTask(task.get().getId(), update);
+                    Display.show(newTask);
+                }
+            } else {
+                Display.unsuccessful();
             }
+        } catch (TaskNotFoundException | NotHavePermission | IllegalArgumentException | TaskUpdateOperationFail e) {
+            Display.unsuccessful();
+            e.printStackTrace();
         }
     }
 
+    private void deleteTask() {
+        Optional<Task> task = chooseTask(this.tasks);
+        if (task.isPresent()) {
+            try {
+                Display.show(task.get());
+                Display.doYouAgree();
+                if (Input.yesNo()) {
+                    UpdateTask update = new UpdateTask(this.userName, task.get().getName(), task.get().getDescription(), task.get().isOpen());
+                    iInteractor.deleteTask(task.get().getId(), update);
+                }
+            } catch (TaskNotFoundException | NotHavePermission | IllegalArgumentException e) {
+                Display.unsuccessful();
+                e.printStackTrace();
+            }
+        } else {
+            Display.unsuccessful();
+        }
+    }
 
     private Optional<Task> chooseTask(Map<Integer, Task> mapTasks) {
         if (mapTasks.isEmpty())
             return Optional.empty();
         Display.show(mapTasks);
-        String str = enterNameOrNumberOfTask();
-        Map<Integer, Task> newMapTasks = new HashMap<>();
-        AtomicInteger count = new AtomicInteger();
-        count.set(0);
-
+        String str = Input.numberOfTask();
         //Если было введно число, то пытаемся достать по номеру из mapTasks
+        Task task = null;
         if (StringParser.isNumeric(str)) {
             int num = Integer.parseInt(str);
-            Task task = mapTasks.get(num);
-            if (task != null)
-                newMapTasks.put(count.getAndIncrement(), task);
+            task = mapTasks.get(num);
+        } else {
+            Display.itIsNotNumber();
         }
-        // Так же проверяем есть ли задача с похожим названием.
-        mapTasks.values().stream().filter((item) -> item.getName().equals(str)).forEach((item) -> newMapTasks.put(count.getAndIncrement(), item));
-        //mapTasks.values().stream().filter((task -> task.getName().equals(str))).peek((item -> newMapTasks.put(count.getAndIncrement(), item)));
-        if (newMapTasks.isEmpty())
-            return Optional.empty();
-        if (newMapTasks.size() == 1)
-            return Optional.ofNullable(newMapTasks.get(0));
-        // Если в выборе оказалось больше чем одна задача повторяем операцию.
-        return chooseTask(newMapTasks);
-    }
-
-    private String enterNameOrNumberOfTask() {
-        Display.EnterNameOrNumberOfTask();
-        Scanner scanner = new Scanner(System.in);
-        return scanner.nextLine();
+        return Optional.ofNullable(task);
     }
 
     private void observeTasks() {
@@ -132,11 +164,12 @@ public class Console implements IPresenter {
             Display.unsuccessful();
         else
             Display.successful();
+        requestTasks();
     }
 
     private UpdateTask enterTask() {
-        String nameTask = enterNameOfTask();
-        String descriptionOfTask = enterDescriptionOfTask();
+        String nameTask = Input.nameOfTask();
+        String descriptionOfTask = Input.descriptionOfTask();
         return new UpdateTask(userName, nameTask, descriptionOfTask, false);
     }
 
@@ -147,76 +180,30 @@ public class Console implements IPresenter {
         return Command.fromString(word);
     }
 
-    private boolean authenticated() {
-        return doLogin();
-    }
-
-    private boolean doLogin() {
-        String name = enterLogin();
-        if (this.iInteractor.isUserPresent(name)) {
-            this.userName = name;
-            Display.successful();
-            return true;
-        } else {
-            Display.unsuccessful();
-            Display.doYouWantAddNewUser();
-            boolean want = false;
-            try {
-                want = enterYesNo();
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            }
-            if (want) {
-                String surname = enterSurname();
-                UpdateUser user = new UpdateUser(name, surname);
-                try {
-                    if(iInteractor.addUser(user))
-                        this.userName = iInteractor.getUser(user).getId();
-                    Display.successfulAddingNewUser();
-                    return true;
-                } catch (UsernameExistsException | UserNotFoundException e) {
-                    e.printStackTrace();
-                    Display.unsuccessful();
+    private boolean authenticate() {
+        try {
+            String name = Input.login();
+            if (this.iInteractor.isUserPresent(name)) {
+                this.userName = name;
+                Display.successful();
+                return true;
+            } else {
+                Display.unsuccessful();
+                Display.doYouWantAddNewUser();
+                boolean yesNo = Input.yesNo();
+                if (yesNo) {
+                    String surname = Input.surname();
+                    UpdateUser updateUser = new UpdateUser(name, surname);
+                    if (iInteractor.addUser(updateUser)) {
+                        this.userName = iInteractor.getUser(updateUser).getId();
+                        Display.successfulAddingNewUser();
+                        return true;
+                    }
                 }
             }
+        } catch (UsernameExistsException | UserNotFoundException | IllegalArgumentException e) {
+            Display.unsuccessful();
         }
         return false;
-    }
-
-    private boolean enterYesNo() throws IllegalArgumentException {
-        System.out.print("Enter yes or no :");
-        Scanner scanner = new Scanner(System.in);
-        String name;
-        name = scanner.nextLine();
-        return StringParser.ToBoolean(name);
-    }
-
-    private String enterLogin() {
-        Display.enterLogin();
-        Scanner scanner = new Scanner(System.in);
-        return scanner.nextLine();
-    }
-
-    private String enterSurname() {
-        Display.enterSurname();
-        Scanner scanner = new Scanner(System.in);
-        return scanner.nextLine();
-    }
-
-    private String enterNameOfTask() {
-        Display.enterNameOfTask();
-        Scanner scanner = new Scanner(System.in);
-        return scanner.nextLine();
-    }
-
-    private String enterDescriptionOfTask() {
-        Display.enterDescriptionOfTask();
-        Scanner scanner = new Scanner(System.in);
-        return scanner.nextLine();
-    }
-
-    @Override
-    public void stop() {
-        this.work = false;
     }
 }

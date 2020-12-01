@@ -7,10 +7,10 @@ public enum Command {
     UPD("/upd"),
     EXT("/ext"),
     HLP("/hlp"),
-    UND(null);
+    UND("/und");
     private String text;
 
-    private Command(String text) {
+    Command(String text) {
         this.text = text;
     }
 
