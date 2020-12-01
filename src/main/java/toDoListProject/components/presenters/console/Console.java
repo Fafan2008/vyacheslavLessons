@@ -12,7 +12,6 @@ import toDoListProject.components.presenters.console.additinalPackage.StringPars
 import toDoListProject.components.presenters.console.additinalPackage.TaskPart;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class Console implements IPresenter {
