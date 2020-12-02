@@ -12,11 +12,12 @@ public class Display {
     public static void menu() {
         System.out.println("Actions: ");
         System.out.println("1) CMND " + Command.OBS.getText() + " \"Observe my tasks.\" ");
-        System.out.println("2) CMND " + Command.ADD.getText() + " \"Add task.\" ");
-        System.out.println("3) CMND " + Command.DEL.getText() + " \"Delete task.\" ");
-        System.out.println("4) CMND " + Command.UPD.getText() + " \"Update my task.\" ");
-        System.out.println("5) CMND " + Command.EXT.getText() + " \"Turn off pc power.\" ");
+        System.out.println("2) CMND " + Command.VIE.getText() + " \"View specific task.\" ");
+        System.out.println("3) CMND " + Command.ADD.getText() + " \"Add task.\" ");
+        System.out.println("4) CMND " + Command.DEL.getText() + " \"Delete task.\" ");
+        System.out.println("5) CMND " + Command.UPD.getText() + " \"Update my task.\" ");
         System.out.println("6) CMND " + Command.HLP.getText() + " \"Help menu.\" ");
+        System.out.println("7) CMND " + Command.EXT.getText() + " \"Exit.\" ");
     }
 
     public static void enterLogin() { System.out.print("Pls enter login name: "); }

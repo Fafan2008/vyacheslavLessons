@@ -56,13 +56,24 @@ public class Console implements IPresenter {
             case OBS:
                 observeTasks();
                 break;
-            case EXT:
-                stop();
+            case VIE:
+                viewTask();
                 break;
             case HLP:
                 Display.menu();
                 break;
+            case EXT:
+                stop();
+                break;
         }
+    }
+
+    private void viewTask() {
+        Optional<Task> task = chooseTask(this.tasks);
+        if(task.isPresent())
+            Display.show(task.get());
+        else
+            Display.unsuccessful();
     }
 
     private void updateTask() {
@@ -82,9 +93,14 @@ public class Console implements IPresenter {
                         String descriptionTask = Input.descriptionOfTask();
                         update = new UpdateTask(task.get().getOwner(), task.get().getName(), descriptionTask, task.get().isOpen());
                         break;
+                    case ISOPEN:
+                        update = new UpdateTask(task.get().getOwner(), task.get().getName(), task.get().getDescription(), !task.get().isOpen());
+                        break;
                     case UND:
                         Display.unsuccessful();
-                        break;
+                        return;
+                    default:
+                        throw new TaskUpdateOperationFail();
                 }
                 Display.doYouAgree();
                 if (Input.yesNo()) {
@@ -169,7 +185,7 @@ public class Console implements IPresenter {
     private UpdateTask enterTask() {
         String nameTask = Input.nameOfTask();
         String descriptionOfTask = Input.descriptionOfTask();
-        return new UpdateTask(userName, nameTask, descriptionOfTask, false);
+        return new UpdateTask(userName, nameTask, descriptionOfTask, true);
     }
 
     private Command enterCmd() {

@@ -2,6 +2,7 @@ package toDoListProject.components.presenters.console.additinalPackage;
 
 public enum Command {
     OBS("/obs"),
+    VIE("/vie"),
     ADD("/add"),
     DEL("/del"),
     UPD("/upd"),

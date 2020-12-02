@@ -1,17 +1,18 @@
-package toDoListProject.components.repositories.dispetcher;
+package toDoListProject.components.repositories.dispetcher.memory;
 
 import toDoListProject.components.entities.task.Task;
 import toDoListProject.components.entities.task.UpdateTask;
 import toDoListProject.components.entities.user.UpdateUser;
 import toDoListProject.components.entities.user.User;
+import toDoListProject.components.repositories.dispetcher.IDB;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class DBMemory implements IDB {
-    private Map<String, User> dbUsers = new HashMap<>();
-    private Map<String, Task> dbTasks = new HashMap<>();
-    private Map<String, Set<String>> dbLinkUserTasks = new HashMap<>();
+    private final Map<String, User> dbUsers = new HashMap<>();
+    private final Map<String, Task> dbTasks = new HashMap<>();
+    private final Map<String, Set<String>> dbLinkUserTasks = new HashMap<>();
 
     @Override
     public Optional<Task> addTask(UpdateTask updateTask) {
@@ -55,9 +56,9 @@ public class DBMemory implements IDB {
 
         if(dbLinkUserTasks.containsKey(userId)){
             if(onlyOpened)
-                return dbLinkUserTasks.get(userId).stream().map((id)-> dbTasks.get(id)).filter(task -> task.isOpen()).collect(Collectors.toList());
+                return dbLinkUserTasks.get(userId).stream().map(dbTasks::get).filter(Task::isOpen).collect(Collectors.toList());
             else
-                return dbLinkUserTasks.get(userId).stream().map((id)-> dbTasks.get(id)).collect(Collectors.toList());
+                return dbLinkUserTasks.get(userId).stream().map(dbTasks::get).collect(Collectors.toList());
         }
         return new ArrayList<>();
     }
@@ -80,7 +81,6 @@ public class DBMemory implements IDB {
     }
     @Override
     public Optional<User> getUser(String userId) {
-        User us = dbUsers.get(userId);
         return Optional.ofNullable(dbUsers.get(userId));
     }
 }

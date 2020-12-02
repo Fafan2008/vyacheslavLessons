@@ -57,11 +57,11 @@ public class Interactor implements IInteractor {
         if(!task.isPresent()){
             throw new TaskNotFoundException();
         }
-        if(task.get().getOwner() != update.userId()){
+        if(!task.get().getOwner().equals(update.userId())){
             throw new NotHavePermission();
         }
         if(IDB.updateTask(taskId, update).isPresent())
-            return IDB.updateTask(taskId, update).get();
+            return IDB.getTask(taskId).get();
         else
             throw new TaskUpdateOperationFail();
     }
