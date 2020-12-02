@@ -4,7 +4,6 @@ import toDoListProject.components.entities.task.Task;
 import toDoListProject.components.entities.task.UpdateTask;
 import toDoListProject.components.entities.user.UpdateUser;
 import toDoListProject.components.entities.user.User;
-import toDoListProject.components.interactors.exceptions.UsernameExistsException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -28,12 +27,10 @@ public class DBMemory implements IDB {
         dbLinkUserTasks.get(userID).add(uuid);
         return Optional.ofNullable(dbTasks.get(uuid));
     }
-
     @Override
     public Optional<Task> getTask(String taskId) {
         return Optional.ofNullable(dbTasks.get(taskId));
     }
-
     @Override
     public boolean deleteTask(String taskId, UpdateTask updateTask) {
         if (dbTasks.containsKey(taskId) && dbLinkUserTasks.get(updateTask.userId()).contains(taskId)){
@@ -43,7 +40,6 @@ public class DBMemory implements IDB {
         }
         return false;
     }
-
     @Override
     public Optional<Task> updateTask(String taskId, UpdateTask update) {
         if(dbTasks.containsKey(taskId)){
@@ -54,7 +50,6 @@ public class DBMemory implements IDB {
         }
         return Optional.empty();
     }
-
     @Override
     public List<Task> getTaskList(String userId, boolean onlyOpened) {
 
@@ -66,7 +61,6 @@ public class DBMemory implements IDB {
         }
         return new ArrayList<>();
     }
-
     @Override
     public Optional<User> addUser(UpdateUser update) {
         if (!dbUsers.containsKey(update.getId())){
@@ -76,17 +70,14 @@ public class DBMemory implements IDB {
         }
         return Optional.empty();
     }
-
     @Override
     public boolean deleteUser(String id) {
         return false;
     }
-
     @Override
     public Optional<User> updateUser(UpdateUser update) {
         return Optional.empty();
     }
-
     @Override
     public Optional<User> getUser(String userId) {
         User us = dbUsers.get(userId);

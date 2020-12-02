@@ -10,19 +10,17 @@ import java.util.Optional;
 
 public interface IDB {
     Optional<Task> addTask(UpdateTask task);
-    boolean deleteTask(String taskId, UpdateTask updateTask);
     Optional<Task> updateTask(String taskId, UpdateTask update);
-
-    Optional<User> addUser(UpdateUser update);
-    boolean deleteUser(String id);
-    Optional<User> updateUser(UpdateUser update);
-
-    Optional<Task> getTask(String taskId);
-    Optional<User> getUser(String userId);
-
     List<Task> getTaskList(String userId, boolean onlyOpened);
-
     default List<Task> getTaskList(String userId){
         return getTaskList(userId, false);
     }
+    boolean deleteTask(String taskId, UpdateTask updateTask);
+
+    Optional<User> addUser(UpdateUser update);
+    Optional<User> updateUser(UpdateUser update);
+    boolean deleteUser(String id);
+
+    Optional<Task> getTask(String taskId);
+    Optional<User> getUser(String userId);
 }
