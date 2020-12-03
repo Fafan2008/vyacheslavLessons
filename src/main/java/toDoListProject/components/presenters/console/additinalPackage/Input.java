@@ -1,5 +1,6 @@
 package toDoListProject.components.presenters.console.additinalPackage;
 
+import toDoListProject.components.entities.task.UpdateTask;
 import toDoListProject.components.presenters.console.Display;
 
 import java.util.Scanner;
@@ -32,5 +33,11 @@ public class Input {
     static public String numberOfTask() {
         Display.EnterNumberOfTask();
         return Input.string();
+    }
+    static public Command cmd() {
+        Display.enterCmd();
+        Scanner scanner = new Scanner(System.in);
+        String word = scanner.nextLine();
+        return Command.fromString(word);
     }
 }

@@ -32,7 +32,7 @@ public class Console implements IPresenter {
             work = true;
         }
         while (work) {
-            Command cmd = enterCmd();
+            Command cmd = Input.cmd();
             execute(cmd);
         }
     }
@@ -174,25 +174,14 @@ public class Console implements IPresenter {
     }
 
     private void addTask() {
-        UpdateTask update = enterTask();
+        String nameTask = Input.nameOfTask();
+        String descriptionOfTask = Input.descriptionOfTask();
+        UpdateTask update = new UpdateTask(userName, nameTask, descriptionOfTask, true);
         if (!iInteractor.addTask(update).isPresent())
             Display.unsuccessful();
         else
             Display.successful();
         requestTasks();
-    }
-
-    private UpdateTask enterTask() {
-        String nameTask = Input.nameOfTask();
-        String descriptionOfTask = Input.descriptionOfTask();
-        return new UpdateTask(userName, nameTask, descriptionOfTask, true);
-    }
-
-    private Command enterCmd() {
-        Display.enterCmd();
-        Scanner scanner = new Scanner(System.in);
-        String word = scanner.nextLine();
-        return Command.fromString(word);
     }
 
     private boolean authenticate() {
