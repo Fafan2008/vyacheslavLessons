@@ -30,10 +30,15 @@ public class Console implements IPresenter {
             requestTasks();
             work = true;
         }
-        while (work) {
-            Command cmd = Input.cmd();
-            execute(cmd);
-        }
+
+        Runnable runnable = () -> {
+            while (work) {
+                Command cmd = Input.cmd();
+                execute(cmd);
+            }
+        };
+
+        new Thread(runnable).start();
     }
 
     @Override
