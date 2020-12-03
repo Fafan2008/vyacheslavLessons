@@ -1,6 +1,5 @@
 package toDoListProject.components.presenters.console.additinalPackage;
 
-import toDoListProject.components.entities.task.UpdateTask;
 import toDoListProject.components.presenters.console.Display;
 
 import java.util.Scanner;
@@ -12,7 +11,7 @@ public class Input {
     }
     static public boolean yesNo() throws IllegalArgumentException {
         System.out.print("Enter yes or no :");
-        return StringParser.ToBoolean(Input.string());
+        return StringHelper.ToBoolean(Input.string());
     }
     static public String login() {
         Display.enterLogin();

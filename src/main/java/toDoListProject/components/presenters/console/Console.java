@@ -8,7 +8,7 @@ import toDoListProject.components.interactors.exceptions.*;
 import toDoListProject.components.presenters.IPresenter;
 import toDoListProject.components.presenters.console.additinalPackage.Command;
 import toDoListProject.components.presenters.console.additinalPackage.Input;
-import toDoListProject.components.presenters.console.additinalPackage.StringParser;
+import toDoListProject.components.presenters.console.additinalPackage.StringHelper;
 import toDoListProject.components.presenters.console.additinalPackage.TaskPart;
 
 import java.util.*;
@@ -18,7 +18,6 @@ public class Console implements IPresenter {
     private final IInteractor iInteractor;
     private boolean work = false;
     private String userName;
-    private final Map<Integer, Task> tasks = new HashMap<>();
 
     public Console(IInteractor iInteractor) {
         this.iInteractor = iInteractor;
@@ -65,11 +64,14 @@ public class Console implements IPresenter {
             case EXT:
                 stop();
                 break;
+            case UND:
+                Display.undefinedCommand();
+                break;
         }
     }
 
     private void viewTask() {
-        Optional<Task> task = chooseTask(this.tasks);
+        Optional<Task> task = chooseTask(requestTasks());
         if(task.isPresent())
             Display.show(task.get());
         else
@@ -78,7 +80,7 @@ public class Console implements IPresenter {
 
     private void updateTask() {
         try {
-            Optional<Task> task = chooseTask(this.tasks);
+            Optional<Task> task = chooseTask(requestTasks());
             if (task.isPresent()) {
                 Display.show(task.get());
                 Display.whatYouWantChange();
@@ -117,7 +119,7 @@ public class Console implements IPresenter {
     }
 
     private void deleteTask() {
-        Optional<Task> task = chooseTask(this.tasks);
+        Optional<Task> task = chooseTask(requestTasks());
         if (task.isPresent()) {
             try {
                 Display.show(task.get());
@@ -142,7 +144,7 @@ public class Console implements IPresenter {
         String str = Input.numberOfTask();
         //Если было введно число, то пытаемся достать по номеру из mapTasks
         Task task = null;
-        if (StringParser.isNumeric(str)) {
+        if (StringHelper.isNumeric(str)) {
             int num = Integer.parseInt(str);
             task = mapTasks.get(num);
         } else {
@@ -162,11 +164,11 @@ public class Console implements IPresenter {
             List<Task> sortedTasks = tasks.stream()
                     .sorted(Comparator.comparing(Task::getName))
                     .collect(Collectors.toList());
-            this.tasks.clear();
+            Map<Integer, Task> mapOfTasks= new HashMap<>();
             for (int i = 0; i < sortedTasks.size(); i++) {
-                this.tasks.put(i, sortedTasks.get(i));
+                mapOfTasks.put(i, sortedTasks.get(i));
             }
-            return this.tasks;
+            return mapOfTasks;
         } catch (UserNotFoundException e) {
             e.printStackTrace();
         }

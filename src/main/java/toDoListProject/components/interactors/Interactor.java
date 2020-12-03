@@ -5,6 +5,7 @@ import toDoListProject.components.entities.task.UpdateTask;
 import toDoListProject.components.entities.user.UpdateUser;
 import toDoListProject.components.entities.user.User;
 import toDoListProject.components.interactors.exceptions.*;
+import toDoListProject.components.presenters.console.Display;
 import toDoListProject.components.repositories.dispetcher.IDB;
 
 import java.util.List;
@@ -71,8 +72,12 @@ public class Interactor implements IInteractor {
         Optional<Task> task = IDB.getTask(taskId);
         if (!task.isPresent())
             throw new TaskNotFoundException();
-        if(task.get().getOwner() == updateTask.userId())
-            IDB.deleteTask(taskId, updateTask);
+        if(task.get().getOwner().equals(updateTask.userId())){
+            if(IDB.deleteTask(taskId, updateTask))
+                Display.successful();
+            else
+                Display.unsuccessful();
+        }
         else
             throw new NotHavePermission();
     }

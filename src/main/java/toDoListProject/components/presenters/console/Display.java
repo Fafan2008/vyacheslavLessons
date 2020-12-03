@@ -35,7 +35,7 @@ public class Display {
     }
 
     public static void doYouWantAddNewUser() {
-        System.out.println("Do you want add new user? : ");
+        System.out.println("Do you want add new user?");
     }
 
     public static void enterSurname() {
@@ -89,5 +89,13 @@ public class Display {
 
     public static void whatYouWantChange() {
         System.out.println("What you want change?");
+    }
+
+    public static void haveNotPermission() {
+        System.out.println("Have Not Permission!!!");
+    }
+
+    public static void undefinedCommand() {
+        System.out.println("Undefined command!!!");
     }
 }
