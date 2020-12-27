@@ -76,7 +76,7 @@ public class DBMemory implements IDB {
         return false;
     }
     @Override
-    public Optional<User> updateUser(UpdateUser update) {
+    public Optional<User> updateUser(String userID, UpdateUser update) {
         return Optional.empty();
     }
     @Override

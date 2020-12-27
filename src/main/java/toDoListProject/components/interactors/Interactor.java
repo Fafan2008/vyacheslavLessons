@@ -41,7 +41,26 @@ public class Interactor implements IInteractor {
 
     @Override
     public boolean updateUser(String userId, UpdateUser update) throws UserNotFoundException, UsernameExistsException {
-        return false;
+        if(isUserPresent(userId)){
+            if(isUserPresent(update.getId()) && !update.getId().equals(userId))
+                throw new UsernameExistsException();
+        }
+        else{
+            throw new UserNotFoundException();
+        }
+        boolean result = true;
+        Optional<User> user =  IDB.updateUser(userId, update);
+        if (user.isPresent() && !user.get().getId().equals(userId)){
+            List<Task> tasks = IDB.getTaskList(userId);
+            for (Task task : tasks){
+                //Change owner of tasks.
+                UpdateTask updateTask = new UpdateTask(user.get().getId(), task.getName(), task.getDescription(), task.isOpen());
+                Optional<Task> newTask = IDB.updateTask(task.getId(), updateTask);
+                if (!newTask.isPresent())
+                    result = false;
+            }
+        }
+        return result;
     }
 
     @Override

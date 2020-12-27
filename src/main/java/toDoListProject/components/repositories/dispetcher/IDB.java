@@ -19,7 +19,7 @@ public interface IDB {
     }
 
     Optional<User> addUser(UpdateUser update);
-    Optional<User> updateUser(UpdateUser update);
+    Optional<User> updateUser(String userID, UpdateUser update);
     boolean deleteUser(String id);
     Optional<User> getUser(String userId);
 }

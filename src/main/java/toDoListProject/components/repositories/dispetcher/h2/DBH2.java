@@ -352,8 +352,34 @@ public class DBH2 implements IDB {
     }
 
     @Override
-    public Optional<User> updateUser(UpdateUser update) {
-        return Optional.empty();
+    public Optional<User> updateUser(String userID, UpdateUser update) {
+        System.out.println("Updating user in database...");
+        Statement stmt = null;
+        Optional<User> user = Optional.empty();
+        try {
+            // Execute a query
+            stmt = getConnection().createStatement();
+            String sql = "UPDATE " + DB_TABLE_ACCOUNTS + " SET "
+                    + DB_USER_NAME + " = " + StringHelper.quote(update.getId())
+                    + ", "
+                    + DB_USER_SURNAME + " = " + StringHelper.quote(update.getSurname())
+                    + " WHERE " + DB_USER_NAME + " = " + StringHelper.quote(userID);
+            stmt.executeUpdate(sql);
+            user = getUser(update.getId());
+        } catch (Exception e) {
+            // Handle errors
+            e.printStackTrace();
+        }
+        finally {
+            // Clean-up environment
+            try {
+                if (stmt != null)
+                    stmt.close();
+            } catch (SQLException se2) {
+                se2.printStackTrace();
+            }// end try
+        } // end finally try
+        return user;
     }
 
     @Override

@@ -2,10 +2,12 @@ package toDoListProject.components.presenters.console.additinalPackage;
 
 public enum Command {
     OBS("/obs"),
-    VIE("/vie"),
+    VIT("/vit"),
+    VIU("/viu"),
     ADD("/add"),
     DEL("/del"),
-    UPD("/upd"),
+    TUP("/tup"),
+    UUP("/uup"),
     EXT("/ext"),
     HLP("/hlp"),
     UND("/und");

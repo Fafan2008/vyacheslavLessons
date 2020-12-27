@@ -17,7 +17,7 @@ public class Input {
         Display.enterLogin();
         return Input.string();
     }
-    static public String surname() {
+    static public String surnameOfUser() {
         Display.enterSurname();
         return Input.string();
     }
@@ -38,5 +38,10 @@ public class Input {
         Scanner scanner = new Scanner(System.in);
         String word = scanner.nextLine();
         return Command.fromString(word);
+    }
+
+    public static String nameOfUser() {
+        Display.enterNameOfUser();
+        return Input.string();
     }
 }

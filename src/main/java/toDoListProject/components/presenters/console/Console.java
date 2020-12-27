@@ -3,13 +3,11 @@ package toDoListProject.components.presenters.console;
 import toDoListProject.components.entities.task.Task;
 import toDoListProject.components.entities.task.UpdateTask;
 import toDoListProject.components.entities.user.UpdateUser;
+import toDoListProject.components.entities.user.User;
 import toDoListProject.components.interactors.IInteractor;
 import toDoListProject.components.interactors.exceptions.*;
 import toDoListProject.components.presenters.IPresenter;
-import toDoListProject.components.presenters.console.additinalPackage.Command;
-import toDoListProject.components.presenters.console.additinalPackage.Input;
-import toDoListProject.components.presenters.console.additinalPackage.StringHelper;
-import toDoListProject.components.presenters.console.additinalPackage.TaskPart;
+import toDoListProject.components.presenters.console.additinalPackage.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -17,7 +15,7 @@ import java.util.stream.Collectors;
 public class Console implements IPresenter {
     private final IInteractor iInteractor;
     private boolean work = false;
-    private String userName;
+    private User m_user;
 
     public Console(IInteractor iInteractor) {
         this.iInteractor = iInteractor;
@@ -51,8 +49,11 @@ public class Console implements IPresenter {
             case ADD:
                 addTask();
                 break;
-            case UPD:
+            case TUP:
                 updateTask();
+                break;
+            case UUP:
+                updateUser();
                 break;
             case DEL:
                 deleteTask();
@@ -60,8 +61,11 @@ public class Console implements IPresenter {
             case OBS:
                 observeTasks();
                 break;
-            case VIE:
+            case VIT:
                 viewTask();
+                break;
+            case VIU:
+                viewUser();
                 break;
             case HLP:
                 Display.menu();
@@ -73,6 +77,10 @@ public class Console implements IPresenter {
                 Display.undefinedCommand();
                 break;
         }
+    }
+
+    private void viewUser() {
+        Display.show(this.m_user);
     }
 
     private void viewTask() {
@@ -123,6 +131,39 @@ public class Console implements IPresenter {
         }
     }
 
+    private void updateUser() {
+        try {
+            Display.show(this.m_user);
+            Display.whatYouWantChange();
+            UserPart part = UserPart.fromString(Input.string());
+            UpdateUser update = null;
+            switch (part) {
+                case NAME:
+                    String name = Input.nameOfUser();
+                    update = new UpdateUser(name, this.m_user.getSurname());
+                    break;
+                case SURNAME:
+                    String surname = Input.surnameOfUser();
+                    update = new UpdateUser(this.m_user.getId(), surname);
+                    break;
+                case UND:
+                    Display.unsuccessful();
+                    return;
+                default:
+                    throw new UserUpdateOperationFail();
+            }
+            Display.doYouAgree();
+            if (Input.yesNo()) {
+                boolean result = iInteractor.updateUser(this.m_user.getId(), update);
+                if(result)
+                    this.m_user = iInteractor.getUser(update);
+                Display.show(this.m_user);
+            }
+        } catch (IllegalArgumentException | UserNotFoundException | UsernameExistsException | UserUpdateOperationFail e) {
+            Display.unsuccessful();
+            e.printStackTrace();
+        }
+    }
     private void deleteTask() {
         Optional<Task> task = chooseTask(requestTasks());
         if (task.isPresent()) {
@@ -130,7 +171,7 @@ public class Console implements IPresenter {
                 Display.show(task.get());
                 Display.doYouAgree();
                 if (Input.yesNo()) {
-                    UpdateTask update = new UpdateTask(this.userName, task.get().getName(), task.get().getDescription(), task.get().isOpen());
+                    UpdateTask update = new UpdateTask(this.m_user.getId(), task.get().getName(), task.get().getDescription(), task.get().isOpen());
                     iInteractor.deleteTask(task.get().getId(), update);
                 }
             } catch (TaskNotFoundException | NotHavePermission | IllegalArgumentException e) {
@@ -165,7 +206,7 @@ public class Console implements IPresenter {
 
     private Map<Integer, Task> requestTasks() {
         try {
-            List<Task> tasks = iInteractor.getTaskList(userName);
+            List<Task> tasks = iInteractor.getTaskList(m_user.getId());
             List<Task> sortedTasks = tasks.stream()
                     .sorted(Comparator.comparing(Task::getName))
                     .collect(Collectors.toList());
@@ -183,7 +224,7 @@ public class Console implements IPresenter {
     private void addTask() {
         String nameTask = Input.nameOfTask();
         String descriptionOfTask = Input.descriptionOfTask();
-        UpdateTask update = new UpdateTask(userName, nameTask, descriptionOfTask, true);
+        UpdateTask update = new UpdateTask(m_user.getId(), nameTask, descriptionOfTask, true);
         if (!iInteractor.addTask(update).isPresent())
             Display.unsuccessful();
         else
@@ -195,7 +236,7 @@ public class Console implements IPresenter {
         try {
             String name = Input.login();
             if (this.iInteractor.isUserPresent(name)) {
-                this.userName = name;
+                this.m_user = iInteractor.getUser(new UpdateUser(name, ""));
                 Display.successful();
                 return true;
             } else {
@@ -203,10 +244,10 @@ public class Console implements IPresenter {
                 Display.doYouWantAddNewUser();
                 boolean yesNo = Input.yesNo();
                 if (yesNo) {
-                    String surname = Input.surname();
+                    String surname = Input.surnameOfUser();
                     UpdateUser updateUser = new UpdateUser(name, surname);
                     if (iInteractor.addUser(updateUser)) {
-                        this.userName = iInteractor.getUser(updateUser).getId();
+                        this.m_user = iInteractor.getUser(updateUser);
                         Display.successfulAddingNewUser();
                         return true;
                     }

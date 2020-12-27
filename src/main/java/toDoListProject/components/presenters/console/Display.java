@@ -1,6 +1,7 @@
 package toDoListProject.components.presenters.console;
 
 import toDoListProject.components.entities.task.Task;
+import toDoListProject.components.entities.user.User;
 import toDoListProject.components.presenters.console.additinalPackage.Command;
 
 import java.util.ArrayList;
@@ -12,10 +13,12 @@ public class Display {
     public static void menu() {
         System.out.println("Actions: ");
         System.out.println("1) CMND " + Command.OBS.getText() + " \"Observe my tasks.\" ");
-        System.out.println("2) CMND " + Command.VIE.getText() + " \"View specific task.\" ");
+        System.out.println("2) CMND " + Command.VIT.getText() + " \"View specific task.\" ");
+        System.out.println("2) CMND " + Command.VIU.getText() + " \"View user info.\" ");
         System.out.println("3) CMND " + Command.ADD.getText() + " \"Add task.\" ");
         System.out.println("4) CMND " + Command.DEL.getText() + " \"Delete task.\" ");
-        System.out.println("5) CMND " + Command.UPD.getText() + " \"Update my task.\" ");
+        System.out.println("5) CMND " + Command.TUP.getText() + " \"Update my task.\" ");
+        System.out.println("5) CMND " + Command.UUP.getText() + " \"Update user data.\" ");
         System.out.println("6) CMND " + Command.HLP.getText() + " \"Help menu.\" ");
         System.out.println("7) CMND " + Command.EXT.getText() + " \"Exit.\" ");
     }
@@ -100,4 +103,11 @@ public class Display {
     }
 
     public static void connectingToDB() {System.out.println("Connecting to Data Base ..."); }
+
+    public static void show(User user) {
+        System.out.println("Name: "+ user.getId() +"\n"
+                + "Surname: " + user.getSurname());
+    }
+
+    public static void enterNameOfUser()  { System.out.print("Pls enter Name of user: "); }
 }
