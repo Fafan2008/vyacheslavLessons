@@ -98,4 +98,6 @@ public class Display {
     public static void undefinedCommand() {
         System.out.println("Undefined command!!!");
     }
+
+    public static void connectingToDB() {System.out.println("Connecting to Data Base ..."); }
 }
