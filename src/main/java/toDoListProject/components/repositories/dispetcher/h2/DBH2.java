@@ -172,25 +172,41 @@ public class DBH2 implements IDB {
             if(!getUser(updateTask.userId()).isPresent())
                 return Optional.empty();
             // Execute a query
-            stmt = getConnection().createStatement();
+//            stmt = getConnection().createStatement();
+//            String uuid = UUID.randomUUID().toString();
+//            //Generate new task which will add to H2db
+//            Task newTask = new Task(uuid, updateTask.userId(), updateTask.Name(), updateTask.Description(), updateTask.isOpen(), new Date());
+//
+//            String sql = "INSERT INTO " + DB_TABLE_TASKS + " VALUES ("
+//                    + StringHelper.quote(newTask.getId())
+//                    + ","
+//                    + StringHelper.quote(newTask.getName())
+//                    + ","
+//                    + StringHelper.quote(newTask.getOwner())
+//                    + ","
+//                    + StringHelper.quote(newTask.getDescription())
+//                    + ","
+//                    + newTask.isOpen().toString().toUpperCase()
+//                    + ","
+//                    + StringHelper.quote(newTask.getCreated().toString())
+//                    + ")";
+//            stmt.executeUpdate(sql);
+
             String uuid = UUID.randomUUID().toString();
             //Generate new task which will add to H2db
             Task newTask = new Task(uuid, updateTask.userId(), updateTask.Name(), updateTask.Description(), updateTask.isOpen(), new Date());
+            String sql2 = "insert into " + DB_TABLE_TASKS + " values (?,?,?,?,?,?)";
+            PreparedStatement preparedStatement2 =
+                    getConnection().prepareStatement(sql2);
+            preparedStatement2.setString(1, newTask.getId());
+            preparedStatement2.setString(2, newTask.getName());
+            preparedStatement2.setString(3, newTask.getOwner());
+            preparedStatement2.setString(4, newTask.getDescription());
+            preparedStatement2.setString(5, newTask.isOpen().toString().toUpperCase());
+            preparedStatement2.setString(6, newTask.getCreated().toString());
 
-            String sql = "INSERT INTO " + DB_TABLE_TASKS + " VALUES ("
-                    + StringHelper.quote(newTask.getId())
-                    + ","
-                    + StringHelper.quote(newTask.getName())
-                    + ","
-                    + StringHelper.quote(newTask.getOwner())
-                    + ","
-                    + StringHelper.quote(newTask.getDescription())
-                    + ","
-                    + newTask.isOpen().toString().toUpperCase()
-                    + ","
-                    + StringHelper.quote(newTask.getCreated().toString())
-                    + ")";
-            stmt.executeUpdate(sql);
+            preparedStatement2.executeUpdate();
+
             return getTask(uuid);
         } catch (Exception e) {
             // Handle errors for

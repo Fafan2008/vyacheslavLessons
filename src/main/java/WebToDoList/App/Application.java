@@ -41,14 +41,14 @@ public class Application {
         }
         app.currentInterface.initialize(new Dispetcher(app.db));
         app.currentInterface.start();
-        while (app.currentInterface.isLife()) {
-            try {
-                System.out.println("Main thread work.");
-                Thread.sleep(400);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                break;
-            }
-        }
+//        while (app.currentInterface.isLife()) {
+//            try {
+//                System.out.println("Main thread work.");
+//                Thread.sleep(400);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//                break;
+//            }
+//        }
     }
 }
