@@ -98,7 +98,7 @@ public class Console implements IPresenter {
                 Display.show(task.get());
                 Display.whatYouWantChange();
                 TaskPart part = TaskPart.fromString(Input.string());
-                UpdateTask update = null;
+                UpdateTask update;
                 switch (part) {
                     case NAME:
                         String nameTask = Input.nameOfTask();
@@ -136,7 +136,7 @@ public class Console implements IPresenter {
             Display.show(this.m_user);
             Display.whatYouWantChange();
             UserPart part = UserPart.fromString(Input.string());
-            UpdateUser update = null;
+            UpdateUser update;
             switch (part) {
                 case NAME:
                     String name = Input.nameOfUser();
