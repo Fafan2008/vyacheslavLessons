@@ -30,11 +30,11 @@ public class DBH2 implements IDB {
 
     // Важно! Оба члена класса пришлось объявить статик (я не очень люблю статик объекты, можно ли обыграть иначе?).
     static Connection m_con = null;
-    static Properties m_properties;
+    static Properties mProperties;
 
     public DBH2(Properties properties) {
         Statement stmt = null;
-        m_properties = properties;
+        mProperties = properties;
         try {
             // Check if table DB_TABLE_ACCOUNTS exist
             ResultSet res = getConnection().getMetaData().getTables(null, null, DB_TABLE_ACCOUNTS, null);
@@ -96,7 +96,7 @@ public class DBH2 implements IDB {
     public static Connection getConnection() {
         if (m_con != null) return m_con;
         // get db, user, pass from settings file
-        String db = m_properties.getProperty("db_name");;
+        String db = mProperties.getProperty("db_name");;
         String user ="";
         String pass ="";
         return getConnection(db, user, pass);
@@ -104,8 +104,8 @@ public class DBH2 implements IDB {
     private static Connection getConnection(String db_name,String user_name,String password) {
         try
         {
-            String jdbc_driver = m_properties.getProperty("jdbc_driver");
-            String driver_manager = m_properties.getProperty("driver_manager_property");
+            String jdbc_driver = mProperties.getProperty("jdbc_driver");
+            String driver_manager = mProperties.getProperty("driver_manager_property");
             //Class.forName("com.mysql.jdbc.Driver");
             //m_con = DriverManager.getConnection("jdbc:mysql://localhost/"+db_name+"?user="+user_name+"&password="+password);
             Class.forName(jdbc_driver);
@@ -388,7 +388,6 @@ public class DBH2 implements IDB {
     public void clearAll() {
         PreparedStatement prpStmt = null;
         try {
-            // Важно! Нужно ли повторно делать getConnection(sql) для prpStmt ?
             String sql = "DELETE  FROM " + DB_TABLE_TASKS;
             prpStmt = getConnection().prepareStatement(sql);
             prpStmt.executeUpdate();

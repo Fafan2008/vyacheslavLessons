@@ -1,5 +1,7 @@
 package toDoListProject.components.repositories.dispetcher;
 
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import toDoListProject.components.entities.user.UpdateUser;
@@ -18,7 +20,14 @@ public abstract class IDBTest {
     public void init(){
         idb = createIDB();
     }
-
+    @After
+    public void deinit(){
+        idb.clearAll();
+    }
+    @AfterClass
+    public  void end() {
+        idb.deinitialization();
+    }
     @Test
     public void addAndGetUserTest(){
         Optional<User> userOpt = idb.addUser(new UpdateUser("ABC", "DEF"));
@@ -27,5 +36,4 @@ public abstract class IDBTest {
         assertEquals(userOpt.get(), idb.getUser("ABC").get());
 
     }
-
 }

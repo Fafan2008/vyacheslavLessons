@@ -16,7 +16,7 @@ public class DBMemory implements IDB {
 
     @Override
     public Optional<Task> addTask(UpdateTask updateTask) {
-        if(!getUser(updateTask.userId()).isPresent())
+        if(getUser(updateTask.userId()).isEmpty())
             return Optional.empty();
         String uuid = UUID.randomUUID().toString();
         String userID = updateTask.userId();
@@ -93,7 +93,6 @@ public class DBMemory implements IDB {
 
     @Override
     public void deinitialization() {
-        // Важно! Правильный ли подход?
         clearAll();
     }
 }
