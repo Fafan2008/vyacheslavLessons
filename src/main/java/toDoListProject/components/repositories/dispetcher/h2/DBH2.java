@@ -14,8 +14,8 @@ import java.util.Date;
 import java.util.*;
 
 public class DBH2 implements IDB {
-    static final String JDBC_DRIVER = "org.h2.Driver";
-    static final String DB_PATH = "jdbc:h2:file:" + Paths.get("", "dbH2").toAbsolutePath().toString();
+    //static final String JDBC_DRIVER = "org.h2.Driver";
+    //static final String DB_PATH = /*"jdbc:h2:file:" + */Paths.get("", "dbH2").toAbsolutePath().toString();
     static final String DB_TABLE_TASKS = "TASK4";
     static final String DB_TABLE_ACCOUNTS = "ACCOUNTS4";
     static final String DB_TASK_ID = "UUID";
@@ -27,13 +27,16 @@ public class DBH2 implements IDB {
     static final String DB_USER_NAME = "LOGIN";
     static final String DB_USER_SURNAME = "SURNAME";
     static final String DB_USER_CREATED = "CREATED";
-    static Connection m_con = null;
 
-    public DBH2() {
+    // Важно! Оба члена класса пришлось объявить статик (я не очень люблю статик объекты, можно ли обыграть иначе?).
+    static Connection m_con = null;
+    static Properties m_properties;
+
+    public DBH2(Properties properties) {
         Statement stmt = null;
+        m_properties = properties;
         try {
             // Check if table DB_TABLE_ACCOUNTS exist
-            System.out.println("Checking of existing " + DB_TABLE_ACCOUNTS + " table...");
             ResultSet res = getConnection().getMetaData().getTables(null, null, DB_TABLE_ACCOUNTS, null);
             boolean tableExists = false;
             if (res.next())
@@ -93,7 +96,7 @@ public class DBH2 implements IDB {
     public static Connection getConnection() {
         if (m_con != null) return m_con;
         // get db, user, pass from settings file
-        String db ="";
+        String db = m_properties.getProperty("db_name");;
         String user ="";
         String pass ="";
         return getConnection(db, user, pass);
@@ -101,11 +104,14 @@ public class DBH2 implements IDB {
     private static Connection getConnection(String db_name,String user_name,String password) {
         try
         {
+            String jdbc_driver = m_properties.getProperty("jdbc_driver");
+            String driver_manager = m_properties.getProperty("driver_manager_property");
             //Class.forName("com.mysql.jdbc.Driver");
             //m_con = DriverManager.getConnection("jdbc:mysql://localhost/"+db_name+"?user="+user_name+"&password="+password);
-            Class.forName(JDBC_DRIVER);
+            Class.forName(jdbc_driver);
             Display.connectingToDB();
-            m_con = DriverManager.getConnection(DB_PATH);
+            String path = Paths.get("", "").toAbsolutePath().toString() + "\\";
+            m_con = DriverManager.getConnection(driver_manager + path + db_name);
         }
         catch(Exception e)
         {
@@ -376,5 +382,39 @@ public class DBH2 implements IDB {
             }
         }
         return Optional.ofNullable(user);
+    }
+
+    @Override
+    public void clearAll() {
+        PreparedStatement prpStmt = null;
+        try {
+            // Важно! Нужно ли повторно делать getConnection(sql) для prpStmt ?
+            String sql = "DELETE  FROM " + DB_TABLE_TASKS;
+            prpStmt = getConnection().prepareStatement(sql);
+            prpStmt.executeUpdate();
+            sql = "DELETE  FROM " + DB_TABLE_ACCOUNTS;
+            prpStmt = getConnection().prepareStatement(sql);
+            prpStmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // Clean-up environment
+        finally {
+            try {
+                if (prpStmt != null)
+                    prpStmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void deinitialization() {
+        try {
+            m_con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

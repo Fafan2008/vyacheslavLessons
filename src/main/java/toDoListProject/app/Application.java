@@ -8,14 +8,23 @@ import toDoListProject.components.repositories.dispetcher.IDB;
 import toDoListProject.components.repositories.dispetcher.h2.DBH2;
 import toDoListProject.components.repositories.dispetcher.memory.DBMemory;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.Properties;
+
 public class Application {
-    public static void main(String[] args) {
-        IDB dispetcher = new DBMemory();
-        IInteractor interactor = new Interactor(dispetcher);
-        IPresenter iPresenter = new Console(interactor);
+    public static void main(String[] args) throws IOException {
+        //appProps.store(new FileWriter(propertiesPath), "");
+        IDB dispatcher = new DBMemory();
+        IInteractor interact = new Interactor(dispatcher);
+        IPresenter iPresenter = new Console(interact);
         //iPresenter.start();
 
-        IDB db = new DBH2();
+        String propertiesPath = Paths.get("", "db.properties").toAbsolutePath().toString();
+        Properties dbProps = new Properties();
+        dbProps.load(new FileInputStream(propertiesPath));
+        IDB db = new DBH2(dbProps);
         IInteractor inter = new Interactor(db);
         IPresenter ipres = new Console(inter);
         ipres.start();
