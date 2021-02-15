@@ -83,4 +83,17 @@ public class DBMemory implements IDB {
     public Optional<User> getUser(String userId) {
         return Optional.ofNullable(dbUsers.get(userId));
     }
+
+    @Override
+    public void clearAll() {
+        dbLinkUserTasks.clear();
+        dbTasks.clear();
+        dbUsers.clear();
+    }
+
+    @Override
+    public void deinitialization() {
+        // Важно! Правильный ли подход?
+        clearAll();
+    }
 }

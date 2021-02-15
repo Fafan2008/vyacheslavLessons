@@ -17,9 +17,11 @@ public interface IDB {
     default List<Task> getTaskList(String userId){
         return getTaskList(userId, false);
     }
-
     Optional<User> addUser(UpdateUser update);
     Optional<User> updateUser(String userID, UpdateUser update);
     boolean deleteUser(String id);
     Optional<User> getUser(String userId);
+
+    void clearAll();
+    void deinitialization();
 }
