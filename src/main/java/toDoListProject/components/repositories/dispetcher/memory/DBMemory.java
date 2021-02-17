@@ -16,11 +16,11 @@ public class DBMemory implements IDB {
 
     @Override
     public Optional<Task> addTask(UpdateTask updateTask) {
-        if(getUser(updateTask.userId()).isEmpty())
+        if(getUser(updateTask.getOwnerId()).isEmpty())
             return Optional.empty();
         String uuid = UUID.randomUUID().toString();
-        String userID = updateTask.userId();
-        Task newTask = new Task(uuid, userID, updateTask.Name(), updateTask.Description(), updateTask.isOpen(), new Date());
+        String userID = updateTask.getOwnerId();
+        Task newTask = new Task(uuid, userID, updateTask.getName(), updateTask.getDescription(), updateTask.isOpen(), new Date());
         dbTasks.put(uuid, newTask);
         if (!dbLinkUserTasks.containsKey(userID)) {
             dbLinkUserTasks.put(userID, new HashSet<>());
@@ -34,9 +34,9 @@ public class DBMemory implements IDB {
     }
     @Override
     public boolean deleteTask(String taskId, UpdateTask updateTask) {
-        if (dbTasks.containsKey(taskId) && dbLinkUserTasks.get(updateTask.userId()).contains(taskId)){
+        if (dbTasks.containsKey(taskId) && dbLinkUserTasks.get(updateTask.getOwnerId()).contains(taskId)){
             dbTasks.remove(taskId);
-            dbLinkUserTasks.get(updateTask.userId()).remove(taskId);
+            dbLinkUserTasks.get(updateTask.getOwnerId()).remove(taskId);
             return true;
         }
         return false;
@@ -45,7 +45,11 @@ public class DBMemory implements IDB {
     public Optional<Task> updateTask(String taskId, UpdateTask update) {
         if(dbTasks.containsKey(taskId)){
             Task oldTask = dbTasks.get(taskId);
-            Task newTask = new Task(taskId, update.userId(), update.Name(), update.Description(), update.isOpen(), oldTask.getCreated());
+            Task newTask = new Task(taskId, update.getOwnerId(), update.getName(), update.getDescription(), update.isOpen(), oldTask.getCreated());
+            if (!oldTask.getOwner().equals(newTask.getOwner())){
+                dbLinkUserTasks.get(oldTask.getOwner()).remove(taskId);
+                dbLinkUserTasks.get(newTask.getOwner()).add(taskId);
+            }
             dbTasks.put(taskId, newTask);
             return Optional.ofNullable(dbTasks.get(taskId));
         }
@@ -53,7 +57,6 @@ public class DBMemory implements IDB {
     }
     @Override
     public List<Task> getTaskList(String userId, boolean onlyOpened) {
-
         if(dbLinkUserTasks.containsKey(userId)){
             if(onlyOpened)
                 return dbLinkUserTasks.get(userId).stream().map(dbTasks::get).filter(Task::isOpen).collect(Collectors.toList());
@@ -67,16 +70,41 @@ public class DBMemory implements IDB {
         if (!dbUsers.containsKey(update.getId())){
             User newUser = new User(update.getId(), update.getSurname(), new Date());
             dbUsers.put(update.getId(), newUser);
+            dbLinkUserTasks.put(update.getId(), new HashSet<>());
             return Optional.ofNullable(dbUsers.get(update.getId()));
         }
         return Optional.empty();
     }
     @Override
     public boolean deleteUser(String id) {
+        if(dbUsers.containsKey(id) && dbLinkUserTasks.containsKey(id)){
+            dbUsers.remove(id);
+            dbLinkUserTasks.get(id).forEach(dbTasks::remove);
+            dbLinkUserTasks.remove(id);
+            return true;
+        }
         return false;
     }
     @Override
-    public Optional<User> updateUser(String userID, UpdateUser update) {
+    public Optional<User> updateUser(String userID, UpdateUser updateUser) {
+        if(dbUsers.containsKey(userID) && dbLinkUserTasks.containsKey(userID)){
+            if(!userID.equals(updateUser.getId()) && !dbUsers.containsKey(updateUser.getId())){
+                dbUsers.put(updateUser.getId(), new User(updateUser.getId(), updateUser.getSurname(), dbUsers.get(userID).getCreated()));
+                for (String taskID: dbLinkUserTasks.get(userID)) {
+                    Task oldTask = dbTasks.get(taskID);
+                    dbTasks.put(taskID, new Task(taskID, updateUser.getId(), oldTask.getName(), oldTask.getDescription(), oldTask.isOpen(), oldTask.getCreated()));
+                    if(!dbLinkUserTasks.containsKey(updateUser.getId()))
+                        dbLinkUserTasks.put(updateUser.getId(), new HashSet<>());
+                    dbLinkUserTasks.get(updateUser.getId()).add(taskID);
+                }
+                if (deleteUser(userID))
+                    return Optional.ofNullable(dbUsers.get(updateUser.getId()));
+            }
+            if(userID.equals(updateUser.getId())){
+                dbUsers.put(updateUser.getId(), new User(updateUser.getId(), updateUser.getSurname(), dbUsers.get(userID).getCreated()));
+                return Optional.ofNullable(dbUsers.get(updateUser.getId()));
+            }
+        }
         return Optional.empty();
     }
     @Override

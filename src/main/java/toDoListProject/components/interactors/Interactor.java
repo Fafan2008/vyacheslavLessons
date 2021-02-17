@@ -65,7 +65,7 @@ public class Interactor implements IInteractor {
 
     @Override
     public Optional<Task> addTask(UpdateTask updateTask) {
-        if(isUserPresent(updateTask.userId()))
+        if(isUserPresent(updateTask.getOwnerId()))
             return IDB.addTask(updateTask);
         else
             return Optional.empty();
@@ -77,7 +77,7 @@ public class Interactor implements IInteractor {
         if(!task.isPresent()){
             throw new TaskNotFoundException();
         }
-        if(!task.get().getOwner().equals(update.userId())){
+        if(!task.get().getOwner().equals(update.getOwnerId())){
             throw new NotHavePermission();
         }
         if(IDB.updateTask(taskId, update).isPresent())
@@ -91,7 +91,7 @@ public class Interactor implements IInteractor {
         Optional<Task> task = IDB.getTask(taskId);
         if (!task.isPresent())
             throw new TaskNotFoundException();
-        if(task.get().getOwner().equals(updateTask.userId())){
+        if(task.get().getOwner().equals(updateTask.getOwnerId())){
             if(IDB.deleteTask(taskId, updateTask))
                 Display.successful();
             else

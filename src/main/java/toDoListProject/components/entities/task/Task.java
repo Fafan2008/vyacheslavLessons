@@ -1,18 +1,38 @@
 package toDoListProject.components.entities.task;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class Task {
     private final String id;
-    private final String userId;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return Objects.equals(id, task.id) &&
+                Objects.equals(ownerId, task.ownerId) &&
+                Objects.equals(name, task.name) &&
+                Objects.equals(description, task.description) &&
+                Objects.equals(created, task.created) &&
+                Objects.equals(isOpen, task.isOpen);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, ownerId, name, description, created, isOpen);
+    }
+
+    private final String ownerId;
     private final String name;
     private final String description;
     private final Date created;
     private final Boolean isOpen;
 
-    public Task(String id, String userId, String name, String description, Boolean isOpen, Date created){
+    public Task(String id, String ownerId, String name, String description, Boolean isOpen, Date created){
         this.id = id;
-        this.userId = userId;
+        this.ownerId = ownerId;
         this.name = name;
         this.description = description;
         this.isOpen = isOpen;
@@ -30,6 +50,6 @@ public class Task {
     public Boolean isOpen() { return this.isOpen; }
 
     public String getOwner() {
-        return this.userId;
+        return this.ownerId;
     }
 }

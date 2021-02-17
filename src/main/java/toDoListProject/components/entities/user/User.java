@@ -13,15 +13,15 @@ public class User {
         this.surname = surname;
         this.created = created;
     }
-
     public String getId() {
         return id;
     }
-
     public String getSurname() {
         return surname;
     }
-
+    public Date getCreated() {
+        return created;
+    }
     @Override
     public String toString() {
         return "User{" +
@@ -30,7 +30,6 @@ public class User {
                 ", created=" + created +
                 '}';
     }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -40,7 +39,6 @@ public class User {
                 Objects.equals(surname, user.surname) &&
                 Objects.equals(created, user.created);
     }
-
     @Override
     public int hashCode() {
         return Objects.hash(id, surname, created);

@@ -1,27 +1,27 @@
 package toDoListProject.components.entities.task;
 
 public class UpdateTask {
-    private final String userId;
+    private final String ownerId;
     private final String name;
     private final String description;
     private Boolean isOpen;
 
-    public UpdateTask(String userId, String name, String description, Boolean isOpen) {
-        this.userId = userId;
+    public UpdateTask(String ownerId, String name, String description, Boolean isOpen) {
+        this.ownerId = ownerId;
         this.name = name;
         this.description = description;
         this.isOpen = isOpen;
     }
 
-    public String userId() {
-        return userId;
+    public String getOwnerId() {
+        return ownerId;
     }
 
-    public String Name() {
+    public String getName() {
         return name;
     }
 
-    public String Description() {
+    public String getDescription() {
         return description;
     }
 

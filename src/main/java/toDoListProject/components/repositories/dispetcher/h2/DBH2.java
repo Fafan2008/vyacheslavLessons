@@ -158,11 +158,11 @@ public class DBH2 implements IDB {
         PreparedStatement stmt = null;
         try {
             //check user existence
-            if(!getUser(updateTask.userId()).isPresent())
+            if(!getUser(updateTask.getOwnerId()).isPresent())
                 return Optional.empty();
             //Generate new task which will add to H2db
             String uuid = UUID.randomUUID().toString();
-            Task newTask = new Task(uuid, updateTask.userId(), updateTask.Name(), updateTask.Description(), updateTask.isOpen(), new Date());
+            Task newTask = new Task(uuid, updateTask.getOwnerId(), updateTask.getName(), updateTask.getDescription(), updateTask.isOpen(), new Date());
             //Prepare sql request.
             String sql = "insert into " + DB_TABLE_TASKS + " values (?,?,?,?,?,?)";
             stmt = getConnection().prepareStatement(sql);
@@ -200,15 +200,17 @@ public class DBH2 implements IDB {
                     + DB_TABLE_TASKS
                     + " SET "
                     + DB_TASK_NAME + "=?,"
+                    + DB_TASK_OWNER + "=?,"
                     + DB_TASK_DESCRIPTION + "=?,"
                     + DB_TASK_ISOPEN + "=?"
                     + " WHERE "
                     + DB_TASK_ID + "=?";
             prpStmt = getConnection().prepareStatement(sql);
-            prpStmt.setString(1, update.Name());
-            prpStmt.setString(2, update.Description());
-            prpStmt.setBoolean(3, update.isOpen());
-            prpStmt.setString(4, taskId);
+            prpStmt.setString(1, update.getName());
+            prpStmt.setString(2, update.getOwnerId());
+            prpStmt.setString(3, update.getDescription());
+            prpStmt.setBoolean(4, update.isOpen());
+            prpStmt.setString(5, taskId);
             // Execute update query
             prpStmt.executeUpdate();
             // Return updated task.
@@ -232,7 +234,7 @@ public class DBH2 implements IDB {
         PreparedStatement prpStmt = null;
         try {
             Task task = getTask(taskId).get();
-            if (!task.getOwner().equals(updateTask.userId())){
+            if (!task.getOwner().equals(updateTask.getOwnerId())){
                 Display.haveNotPermission();
                 return false;
             }
@@ -253,7 +255,7 @@ public class DBH2 implements IDB {
             }
         }
         // Return true if not exist
-        return !getTask(taskId).isPresent();
+        return getTask(taskId).isEmpty();
     }
     @Override
     public List<Task> getTaskList(String userId, boolean onlyOpened) {
@@ -295,6 +297,8 @@ public class DBH2 implements IDB {
     }
     @Override
     public Optional<User> addUser(UpdateUser update) {
+        if(getUser(update.getId()).isPresent())
+            return Optional.empty();
         PreparedStatement prpStmt = null;
         try {
             String sql = "insert into " + DB_TABLE_ACCOUNTS + " values ( ?, ?, ? )";
@@ -322,7 +326,8 @@ public class DBH2 implements IDB {
         PreparedStatement prpStmt = null;
         Optional<User> user = Optional.empty();
         try {
-            String sql ="UPDATE " + DB_TABLE_ACCOUNTS
+            String sql ="UPDATE "
+                    + DB_TABLE_ACCOUNTS
                     + " SET "
                     + DB_USER_NAME + "=?, "
                     + DB_USER_SURNAME + "=? "
@@ -333,6 +338,11 @@ public class DBH2 implements IDB {
             prpStmt.setString(2, update.getSurname());
             prpStmt.setString(3, userID);
             prpStmt.executeUpdate();
+            prpStmt.close();
+            if(!userID.equals(update.getId())){
+                List<Task> taskList = getTaskList(userID);
+                taskList.forEach(task -> updateTask(task.getId(), new UpdateTask(update.getId(), task.getName(), task.getDescription(), task.isOpen())));
+            }
             user = getUser(update.getId());
         } catch (Exception e) {
             e.printStackTrace();
@@ -412,6 +422,7 @@ public class DBH2 implements IDB {
     public void deinitialization() {
         try {
             m_con.close();
+            m_con = null;
         } catch (SQLException e) {
             e.printStackTrace();
         }
