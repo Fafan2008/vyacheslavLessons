@@ -1,5 +1,7 @@
 package toDoListProject.components.repositories.dispetcher;
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Service;
 import toDoListProject.components.entities.task.Task;
 import toDoListProject.components.entities.task.UpdateTask;
 import toDoListProject.components.entities.user.UpdateUser;
@@ -7,7 +9,6 @@ import toDoListProject.components.entities.user.User;
 
 import java.util.List;
 import java.util.Optional;
-
 public interface IDB {
     Optional<Task> getTask(String taskId);
     Optional<Task> addTask(UpdateTask task);

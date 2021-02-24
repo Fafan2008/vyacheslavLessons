@@ -5,6 +5,11 @@ import java.util.Objects;
 
 public class Task {
     private final String id;
+    private final String ownerId;
+    private final String name;
+    private final String description;
+    private final Date created;
+    private final Boolean isOpen;
 
     @Override
     public boolean equals(Object o) {
@@ -23,12 +28,6 @@ public class Task {
     public int hashCode() {
         return Objects.hash(id, ownerId, name, description, created, isOpen);
     }
-
-    private final String ownerId;
-    private final String name;
-    private final String description;
-    private final Date created;
-    private final Boolean isOpen;
 
     public Task(String id, String ownerId, String name, String description, Boolean isOpen, Date created){
         this.id = id;
