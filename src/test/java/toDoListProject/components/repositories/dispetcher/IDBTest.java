@@ -46,7 +46,7 @@ public abstract class IDBTest {
         Optional<Task> taskOpt = idb.addTask(new UpdateTask("user", "taskName","taskDescription", true));
         List<Task> tasks = idb.getTaskList("user");
         assertEquals(1, tasks.size());
-        String id = tasks.get(0).getId();
+        String id = tasks.get(0).getUuid();
         assertEquals(taskOpt.get(), idb.getTask(id).get());
     }
     @Test
@@ -76,19 +76,19 @@ public abstract class IDBTest {
     public void updateTaskNameTest(){
         assertTrue(idb.addUser(new UpdateUser("user", "surname")).isPresent());
         Optional<Task> taskOpt = idb.addTask(new UpdateTask("user", "taskName","taskDescription", true));
-        idb.updateTask(taskOpt.get().getId(), new UpdateTask(taskOpt.get().getOwner(), "newTaskName", taskOpt.get().getDescription(), taskOpt.get().isOpen()));
-        assertEquals("newTaskName", idb.getTask(taskOpt.get().getId()).get().getName());
-        assertEquals("taskDescription", idb.getTask(taskOpt.get().getId()).get().getDescription());
-        assertEquals("user", idb.getTask(taskOpt.get().getId()).get().getOwner());
+        idb.updateTask(taskOpt.get().getUuid(), new UpdateTask(taskOpt.get().getOwner(), "newTaskName", taskOpt.get().getDescription(), taskOpt.get().isOpen()));
+        assertEquals("newTaskName", idb.getTask(taskOpt.get().getUuid()).get().getName());
+        assertEquals("taskDescription", idb.getTask(taskOpt.get().getUuid()).get().getDescription());
+        assertEquals("user", idb.getTask(taskOpt.get().getUuid()).get().getOwner());
     }
     @Test
     public void updateTaskDescriptionTest(){
         assertTrue(idb.addUser(new UpdateUser("user", "surname")).isPresent());
         Optional<Task> taskOpt = idb.addTask(new UpdateTask("user", "taskName","taskDescription", true));
-        idb.updateTask(taskOpt.get().getId(), new UpdateTask(taskOpt.get().getOwner(), taskOpt.get().getName(), "newTaskDescription", taskOpt.get().isOpen()));
-        assertEquals("newTaskDescription", idb.getTask(taskOpt.get().getId()).get().getDescription());
-        assertEquals("taskName", idb.getTask(taskOpt.get().getId()).get().getName());
-        assertEquals("user", idb.getTask(taskOpt.get().getId()).get().getOwner());
+        idb.updateTask(taskOpt.get().getUuid(), new UpdateTask(taskOpt.get().getOwner(), taskOpt.get().getName(), "newTaskDescription", taskOpt.get().isOpen()));
+        assertEquals("newTaskDescription", idb.getTask(taskOpt.get().getUuid()).get().getDescription());
+        assertEquals("taskName", idb.getTask(taskOpt.get().getUuid()).get().getName());
+        assertEquals("user", idb.getTask(taskOpt.get().getUuid()).get().getOwner());
     }
     @Test
     public void updateTaskOwnerTest(){
@@ -98,7 +98,7 @@ public abstract class IDBTest {
         idb.addTask(new UpdateTask("user1", "taskName2", "description2", true)).get();
         assertEquals(2, idb.getTaskList(user1.getId()).size());
         assertEquals(0, idb.getTaskList(user2.getId()).size());
-        idb.updateTask(task1.getId(), new UpdateTask(user2.getId(), task1.getName(), task1.getDescription(), task1.isOpen()));
+        idb.updateTask(task1.getUuid(), new UpdateTask(user2.getId(), task1.getName(), task1.getDescription(), task1.isOpen()));
         assertEquals(1, idb.getTaskList(user1.getId()).size());
         assertEquals(1, idb.getTaskList(user2.getId()).size());
         assertEquals(user2.getId(), idb.getTaskList(user2.getId()).get(0).getOwner());

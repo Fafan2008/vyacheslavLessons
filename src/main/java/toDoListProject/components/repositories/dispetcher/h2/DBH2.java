@@ -166,7 +166,7 @@ public class DBH2 implements IDB {
             //Prepare sql request.
             String sql = "insert into " + DB_TABLE_TASKS + " values (?,?,?,?,?,?)";
             stmt = getConnection().prepareStatement(sql);
-            stmt.setString(1, newTask.getId());
+            stmt.setString(1, newTask.getUuid());
             stmt.setString(2, newTask.getName());
             stmt.setString(3, newTask.getOwner());
             stmt.setString(4, newTask.getDescription());
@@ -341,7 +341,7 @@ public class DBH2 implements IDB {
             prpStmt.close();
             if(!userID.equals(update.getId())){
                 List<Task> taskList = getTaskList(userID);
-                taskList.forEach(task -> updateTask(task.getId(), new UpdateTask(update.getId(), task.getName(), task.getDescription(), task.isOpen())));
+                taskList.forEach(task -> updateTask(task.getUuid(), new UpdateTask(update.getId(), task.getName(), task.getDescription(), task.isOpen())));
             }
             user = getUser(update.getId());
         } catch (Exception e) {
