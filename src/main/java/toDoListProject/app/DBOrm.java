@@ -6,6 +6,7 @@ import toDoListProject.components.entities.user.UpdateUser;
 import toDoListProject.components.entities.user.User;
 import toDoListProject.components.repositories.dispetcher.IDB;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,6 +45,8 @@ public class DBOrm implements IDB {
 
     @Override
     public Optional<User> addUser(UpdateUser update) {
+        if(!userRepositories.existsById(update.getId()))
+            userRepositories.save(new UserORM(update.getId(), update.getSurname(), new Date()));
         return Optional.empty();
     }
 
