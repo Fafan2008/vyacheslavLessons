@@ -1,4 +1,4 @@
-package leetcode.invertBinaryTree;
+package leetcode.trees.invertBinaryTree;
 
   //Definition for a binary tree node.
 

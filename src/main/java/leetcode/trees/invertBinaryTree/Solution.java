@@ -1,4 +1,4 @@
-package leetcode.invertBinaryTree;
+package leetcode.trees.invertBinaryTree;
 
 public class Solution {
     public static TreeNode invertTree(TreeNode root){

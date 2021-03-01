@@ -1,4 +1,4 @@
-package leetcode.implementstrStr;
+package leetcode.strings.implementStrStr;
 
 public class Solution {
     public static int strStr(String haystack, String needle){

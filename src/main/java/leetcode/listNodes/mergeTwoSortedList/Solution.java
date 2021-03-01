@@ -1,4 +1,4 @@
-package leetcode.mergeTwoSortedList;
+package leetcode.listNodes.mergeTwoSortedList;
 
 
 class Solution {

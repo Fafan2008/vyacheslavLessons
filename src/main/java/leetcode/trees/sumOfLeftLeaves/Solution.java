@@ -1,4 +1,4 @@
-package leetcode.sumOfLeftLeaves;
+package leetcode.trees.sumOfLeftLeaves;
 
 public class Solution {
     public static int sumOfLeftLeaves(TreeNode root){

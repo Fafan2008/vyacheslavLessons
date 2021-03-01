@@ -1,6 +1,6 @@
-package leetcode.mergeTwoSortedList;
+package leetcode.listNodes.mergeTwoSortedList;
 
-public class ListNode {
+class ListNode {
     int val;
     ListNode next;
     ListNode() {}

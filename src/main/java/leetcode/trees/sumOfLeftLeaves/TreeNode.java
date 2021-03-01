@@ -1,4 +1,4 @@
-package leetcode.sumOfLeftLeaves;
+package leetcode.trees.sumOfLeftLeaves;
 
  //Definition for a binary tree node.
  public class TreeNode {
