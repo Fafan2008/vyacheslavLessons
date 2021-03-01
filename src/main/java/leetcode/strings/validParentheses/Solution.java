@@ -1,8 +1,6 @@
-package leetcode.validParentheses;
+package leetcode.strings.validParentheses;
 
-import java.nio.charset.Charset;
 import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.HashMap;
 
 public class Solution {

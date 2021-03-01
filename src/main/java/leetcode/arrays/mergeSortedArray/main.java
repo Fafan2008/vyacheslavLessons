@@ -1,4 +1,4 @@
-package leetcode.mergeSortedArray;
+package leetcode.arrays.mergeSortedArray;
 
 public class main {
     public static void main(String[] args)

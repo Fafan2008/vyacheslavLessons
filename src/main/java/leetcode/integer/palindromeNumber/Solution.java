@@ -1,4 +1,4 @@
-package leetcode.palindromeNumber;
+package leetcode.integer.palindromeNumber;
 
 public class Solution {
     public static boolean isPalindrome(int x) {
@@ -48,6 +48,7 @@ public class Solution {
             boolean res9 = isPalindrome2(100);
             boolean res10 = isPalindrome2(-11);
             boolean res11 = isPalindrome2(121);
+            boolean res12 = isPalindrome2(1231);
         }
     }
 }

@@ -1,28 +1,27 @@
-package leetcode.removeDuplicatesFromeSortedArray;
+package leetcode.arrays.removeElement;
 
-import java.util.Arrays;
-import java.util.Collections;
-
-class Solution {
-    public static int removeDuplicates(int[] nums) {
+public class Solution {
+    public static int removeElement(int[] nums, int val){
         if(nums.length == 0) return 0;
         int posCurrent = 0;
-        int posInput = 1;
-        while (posCurrent <= nums.length - 1){
-            if(nums[posCurrent] != nums[posInput-1]) {
-                nums[posInput] = nums[posCurrent];
-                posInput++;
+        int posEnd = nums.length;
+        while(posCurrent < posEnd){
+            if(nums[posCurrent] == val){
+                nums[posCurrent] = nums[posEnd-1];
+                posEnd--;
+            }else
+            {
+                posCurrent++;
             }
-            posCurrent++;
         }
-        return posInput;
+        return posEnd;
     }
 
     public static void main(String[] args) {
         int i = 1;
         {
-            int[] arr = new int[]{1,2,3,4,5,6,7};
-            int result = removeDuplicates(arr);
+            int[] arr = new int[]{3,2,2,3};
+            int result = removeElement(arr, 2);
             System.out.print("Test " + i + " return: ");
             System.out.println(result);
             for(int j = 0; j < result; j++)
@@ -31,8 +30,8 @@ class Solution {
             ++i;
         }
         {
-            int[] arr = new int[]{1,2,2,4,4,5,6,7};
-            int result = removeDuplicates(arr);
+            int[] arr = new int[]{3,2,2,3};
+            int result = removeElement(arr, 3);
             System.out.print("Test " + i + " return: ");
             System.out.println(result);
             for(int j = 0; j < result; j++)
@@ -41,8 +40,8 @@ class Solution {
             ++i;
         }
         {
-            int[] arr = new int[]{1};
-            int result = removeDuplicates(arr);
+            int[] arr = new int[]{0,1,2,2,3,0,4,2};
+            int result = removeElement(arr, 2);
             System.out.print("Test " + i + " return: ");
             System.out.println(result);
             for(int j = 0; j < result; j++)
@@ -51,8 +50,8 @@ class Solution {
             ++i;
         }
         {
-            int[] arr = new int[]{};
-            int result = removeDuplicates(arr);
+            int[] arr = new int[]{2};
+            int result = removeElement(arr, 2);
             System.out.print("Test " + i + " return: ");
             System.out.println(result);
             for(int j = 0; j < result; j++)
@@ -61,8 +60,8 @@ class Solution {
             ++i;
         }
         {
-            int[] arr = new int[]{1,1,1,1,1,1};
-            int result = removeDuplicates(arr);
+            int[] arr = new int[]{2,2,2,2,2};
+            int result = removeElement(arr, 2);
             System.out.print("Test " + i + " return: ");
             System.out.println(result);
             for(int j = 0; j < result; j++)
@@ -71,8 +70,8 @@ class Solution {
             ++i;
         }
         {
-            int[] arr = new int[]{1,1,1,1,1,1};
-            int result = removeDuplicates(arr);
+            int[] arr = new int[]{2,2,0,0,0};
+            int result = removeElement(arr, 2);
             System.out.print("Test " + i + " return: ");
             System.out.println(result);
             for(int j = 0; j < result; j++)
@@ -81,8 +80,8 @@ class Solution {
             ++i;
         }
         {
-            int[] arr = new int[]{-100,-10,-1,1,1,1};
-            int result = removeDuplicates(arr);
+            int[] arr = new int[]{20,0,0,0,0};
+            int result = removeElement(arr, 2);
             System.out.print("Test " + i + " return: ");
             System.out.println(result);
             for(int j = 0; j < result; j++)

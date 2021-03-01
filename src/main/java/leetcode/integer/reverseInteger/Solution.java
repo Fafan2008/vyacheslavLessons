@@ -1,9 +1,4 @@
-package leetcode.reverseInteger;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+package leetcode.integer.reverseInteger;
 
 public class Solution {
     public static int reverse(int x){

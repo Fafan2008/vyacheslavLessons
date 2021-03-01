@@ -1,4 +1,4 @@
-package leetcode.searchInsertPosition;
+package leetcode.arrays.searchInsertPosition;
 
 class Solution {
     public static int searchInsertBrutForce(int[] nums, int target) {

@@ -1,4 +1,4 @@
-package leetcode.romanNumerals;
+package leetcode.arrays.romanNumerals;
 
 import java.util.HashMap;
 import java.util.HashSet;
