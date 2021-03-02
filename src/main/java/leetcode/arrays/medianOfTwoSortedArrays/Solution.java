@@ -1,6 +1,9 @@
 package leetcode.arrays.medianOfTwoSortedArrays;
 
 public class Solution {
+    // Мой алгоритм можно сократить до середины. Учитывая что необходимо только центральное значение.
+    // Так же эта задача решается математически за log(n), но я не смог разобраться https://medium.com/@hazemu/finding-the-median-of-2-sorted-arrays-in-logarithmic-time-1d3f2ecbeb46
+
     public static double findMedianSortedArrays(int[] nums1, int[] nums2) {
         if(nums1.length + nums2.length == 1)
             return nums1.length == 1 ? nums1[0] : nums2[0];
