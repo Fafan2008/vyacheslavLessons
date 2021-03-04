@@ -1,8 +1,6 @@
 package toDoListProject.components.repositories.dispetcher.orm;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import toDoListProject.app.TaskRepositories;
-import toDoListProject.app.UserRepositories;
 import toDoListProject.components.repositories.dispetcher.IDB;
 import toDoListProject.components.repositories.dispetcher.IDBTest;
 

@@ -1,7 +1,5 @@
 package toDoListProject.components.entities.user;
 
-import toDoListProject.app.UserORM;
-
 import java.util.Date;
 import java.util.Objects;
 

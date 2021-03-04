@@ -1,7 +1,5 @@
 package toDoListProject.components.entities.task;
 
-import toDoListProject.app.TaskORM;
-
 import java.util.Date;
 import java.util.Objects;
 

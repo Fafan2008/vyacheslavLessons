@@ -1,7 +1,7 @@
-package toDoListProject.app;
+package toDoListProject.components.entities.task;
 
 import org.hibernate.annotations.GenericGenerator;
-import toDoListProject.components.entities.task.UpdateTask;
+import toDoListProject.components.entities.user.UserORM;
 
 import javax.persistence.*;
 import java.util.Date;

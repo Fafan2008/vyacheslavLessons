@@ -1,4 +1,4 @@
-package toDoListProject.app;
+package toDoListProject.components.entities.user;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

@@ -1,9 +1,7 @@
 package toDoListProject.components.repositories.dispetcher.orm;
 
-import toDoListProject.app.TaskORM;
-import toDoListProject.app.TaskRepositories;
-import toDoListProject.app.UserORM;
-import toDoListProject.app.UserRepositories;
+import toDoListProject.components.entities.task.TaskORM;
+import toDoListProject.components.entities.user.UserORM;
 import toDoListProject.components.entities.task.Task;
 import toDoListProject.components.entities.task.UpdateTask;
 import toDoListProject.components.entities.user.UpdateUser;
