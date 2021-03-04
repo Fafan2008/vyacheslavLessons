@@ -4,7 +4,7 @@ public class UpdateTask {
     private final String ownerId;
     private final String name;
     private final String description;
-    private Boolean isOpen;
+    private final Boolean isOpen;
 
     public UpdateTask(String ownerId, String name, String description, Boolean isOpen) {
         this.ownerId = ownerId;

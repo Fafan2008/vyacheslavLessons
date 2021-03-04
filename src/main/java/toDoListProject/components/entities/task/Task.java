@@ -1,10 +1,12 @@
 package toDoListProject.components.entities.task;
 
+import toDoListProject.app.TaskORM;
+
 import java.util.Date;
 import java.util.Objects;
 
 public class Task {
-    private final String id;
+    private final String uuid;
     private final String ownerId;
     private final String name;
     private final String description;
@@ -16,7 +18,7 @@ public class Task {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return Objects.equals(id, task.id) &&
+        return Objects.equals(uuid, task.uuid) &&
                 Objects.equals(ownerId, task.ownerId) &&
                 Objects.equals(name, task.name) &&
                 Objects.equals(description, task.description) &&
@@ -26,20 +28,28 @@ public class Task {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ownerId, name, description, created, isOpen);
+        return Objects.hash(uuid, ownerId, name, description, created, isOpen);
     }
 
     public Task(String id, String ownerId, String name, String description, Boolean isOpen, Date created){
-        this.id = id;
+        this.uuid = id;
         this.ownerId = ownerId;
         this.name = name;
         this.description = description;
         this.isOpen = isOpen;
         this.created = created;
     }
+    public Task(TaskORM taskORM){
+        this.uuid = taskORM.getUuid();
+        this.ownerId = taskORM.getOwner().getId();
+        this.name = taskORM.getName();
+        this.description = taskORM.getDescription();
+        this.isOpen = taskORM.getOpen();
+        this.created = taskORM.getCreated();
+    }
 
-    public String getId() {
-        return this.id;
+    public String getUuid() {
+        return this.uuid;
     }
     public String getName() {
         return this.name;

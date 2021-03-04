@@ -55,7 +55,7 @@ public class Interactor implements IInteractor {
             for (Task task : tasks){
                 //Change owner of tasks.
                 UpdateTask updateTask = new UpdateTask(user.get().getId(), task.getName(), task.getDescription(), task.isOpen());
-                Optional<Task> newTask = IDB.updateTask(task.getId(), updateTask);
+                Optional<Task> newTask = IDB.updateTask(task.getUuid(), updateTask);
                 if (!newTask.isPresent())
                     result = false;
             }
@@ -103,7 +103,7 @@ public class Interactor implements IInteractor {
 
     @Override
     public List<Task> getTaskList(String userId, boolean onlyOpened) throws UserNotFoundException {
-        if(!IDB.getUser(userId).isPresent())
+        if(IDB.getUser(userId).isEmpty())
             throw new UserNotFoundException();
         return IDB.getTaskList(userId);
     }

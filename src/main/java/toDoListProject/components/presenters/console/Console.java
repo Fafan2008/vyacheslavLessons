@@ -119,7 +119,7 @@ public class Console implements IPresenter {
                 }
                 Display.doYouAgree();
                 if (Input.yesNo()) {
-                    Task newTask = iInteractor.updateTask(task.get().getId(), update);
+                    Task newTask = iInteractor.updateTask(task.get().getUuid(), update);
                     Display.show(newTask);
                 }
             } else {
@@ -172,7 +172,7 @@ public class Console implements IPresenter {
                 Display.doYouAgree();
                 if (Input.yesNo()) {
                     UpdateTask update = new UpdateTask(this.m_user.getId(), task.get().getName(), task.get().getDescription(), task.get().isOpen());
-                    iInteractor.deleteTask(task.get().getId(), update);
+                    iInteractor.deleteTask(task.get().getUuid(), update);
                 }
             } catch (TaskNotFoundException | NotHavePermission | IllegalArgumentException e) {
                 Display.unsuccessful();

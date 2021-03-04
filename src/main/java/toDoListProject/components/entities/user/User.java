@@ -1,5 +1,7 @@
 package toDoListProject.components.entities.user;
 
+import toDoListProject.app.UserORM;
+
 import java.util.Date;
 import java.util.Objects;
 
@@ -12,6 +14,11 @@ public class User {
         this.id = id;
         this.surname = surname;
         this.created = created;
+    }
+    public User(UserORM user) {
+        this.id = user.getId();
+        this.surname = user.getSurname();
+        this.created = user.getCreated();
     }
     public String getId() {
         return id;
