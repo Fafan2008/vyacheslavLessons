@@ -12,6 +12,7 @@
     <modules>
         <module>LeetCode</module>
         <module>MyApp</module>
+        <module>Lessons</module>
     </modules>
     <dependencies>
         <dependency>
