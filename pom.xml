@@ -11,6 +11,7 @@
 
     <modules>
         <module>LeetCode</module>
+        <module>MyApp</module>
     </modules>
     <dependencies>
         <dependency>
